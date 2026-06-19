@@ -1,10 +1,26 @@
 import { PredictRequest } from "@/types"
-import { Zap } from "lucide-react"
+import { Zap, Users, AlertTriangle, Wrench, Droplets, HardHat, Flag, Crown, Trophy, Flame, MapPin } from "lucide-react"
+import { SEVERITY_COLORS } from "@/lib/severity"
+import SeverityBadge from "@/components/shared/SeverityBadge"
+
+function getEventIcon(cause: string) {
+  switch (cause) {
+    case "public_event":      return <Users size={16} />
+    case "accident":          return <AlertTriangle size={16} />
+    case "vehicle_breakdown": return <Wrench size={16} />
+    case "water_logging":     return <Droplets size={16} />
+    case "road_work":         return <HardHat size={16} />
+    case "procession":        return <Flag size={16} />
+    case "vip_movement":      return <Crown size={16} />
+    case "sports_event":      return <Trophy size={16} />
+    case "fire":              return <Flame size={16} />
+    default:                  return <MapPin size={16} />
+  }
+}
 
 interface Demo {
   label: string
   tag: string
-  tagColor: string
   description: string
   preset: PredictRequest
 }
@@ -13,7 +29,6 @@ const DEMOS: Demo[] = [
   {
     label: "Cricket at Chinnaswamy",
     tag: "Critical",
-    tagColor: "text-[#f87171]",
     description: "IPL match, 6 PM Friday, MG Road corridor",
     preset: {
       latitude: 12.9788,
@@ -34,7 +49,6 @@ const DEMOS: Demo[] = [
   {
     label: "Breakdown on Outer Ring Road",
     tag: "High",
-    tagColor: "text-[#fb923c]",
     description: "Heavy vehicle, 9 AM Monday, ORR East",
     preset: {
       latitude: 12.9352,
@@ -55,7 +69,6 @@ const DEMOS: Demo[] = [
   {
     label: "Procession in CBD",
     tag: "Medium",
-    tagColor: "text-[#facc15]",
     description: "Religious procession, 2 PM Sunday",
     preset: {
       latitude: 12.9762,
@@ -76,7 +89,6 @@ const DEMOS: Demo[] = [
   {
     label: "Road Work — Off Peak",
     tag: "Low",
-    tagColor: "text-[#4ade80]",
     description: "Scheduled repair, 2 AM, industrial area",
     preset: {
       latitude: 12.9236,
@@ -102,27 +114,35 @@ interface Props {
 
 export default function DemoScenarios({ onLoad }: Props) {
   return (
-    <div className="surface rounded overflow-hidden">
-      <div className="px-4 py-3 border-b border-[#1c1c21] flex items-center gap-2">
-        <Zap size={12} className="text-orange-500" strokeWidth={1.5} />
-        <span className="text-xs font-medium text-[#a1a1aa]">Demo Scenarios</span>
-        <span className="text-[10px] text-[#3f3f46] ml-1">— click to load</span>
-      </div>
-      <div className="divide-y divide-[#1c1c21]">
-        {DEMOS.map(d => (
+    <div className="surface rounded-lg overflow-hidden grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-[var(--border-subtle)]">
+      {DEMOS.map((d, i) => {
+        const color = SEVERITY_COLORS[d.tag] || "var(--border-subtle)"
+        return (
           <button
             key={d.label}
             onClick={() => onLoad(d.preset)}
-            className="w-full px-4 py-3 flex items-center justify-between hover:bg-[#0f0f12] transition-colors text-left group"
+            className="w-full relative flex flex-col items-start hover:bg-[var(--bg-elevated-2)] transition-colors group p-4"
           >
-            <div>
-              <p className="text-xs font-medium text-[#e4e4e7] group-hover:text-white transition-colors">{d.label}</p>
-              <p className="text-[10px] text-[#3f3f46] mt-0.5">{d.description}</p>
+            {/* Top border severity line */}
+            <div 
+              className="absolute top-0 left-0 right-0 h-[3px] opacity-80 group-hover:opacity-100 transition-opacity"
+              style={{ backgroundColor: color }}
+            />
+            
+            <div className="w-full flex justify-between items-start mb-2 mt-1">
+              <span className="text-xl bg-[var(--bg-base)] w-8 h-8 rounded-full flex items-center justify-center border border-[var(--border-subtle)] shadow-sm shrink-0">
+                {getEventIcon(d.preset.event_cause)}
+              </span>
+              <SeverityBadge label={d.tag} size="sm" />
             </div>
-            <span className={`text-[11px] font-medium ${d.tagColor} shrink-0 ml-3`}>{d.tag}</span>
+
+            <div className="text-left w-full mt-1">
+              <p className="text-xs font-semibold text-[var(--text-primary)] mb-1 group-hover:text-[var(--accent-signal)] transition-colors line-clamp-1">{d.label}</p>
+              <p className="font-data text-[10px] text-[var(--text-secondary)] leading-relaxed">{d.description}</p>
+            </div>
           </button>
-        ))}
-      </div>
+        )
+      })}
     </div>
   )
 }

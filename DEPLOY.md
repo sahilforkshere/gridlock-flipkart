@@ -40,7 +40,10 @@ Vercel (frontend)  ──HTTPS──►  Railway Go API (:8080)
 
 1. **Add Service** → same repo
 2. Set **Root Directory** to `backend`
-3. Uses `backend/Dockerfile`
+3. Configure the Go Environment (if not using Docker automatically):
+   - **Environment**: Go
+   - **Build Command**: `go build -o app`
+   - **Start Command**: `./app`
 4. Add environment variable:
 
 | Variable | Value |

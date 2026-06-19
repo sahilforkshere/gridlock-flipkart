@@ -1,5 +1,3 @@
-"use client";
-
 import { Renderer, Program, Mesh, Color, Triangle } from 'ogl';
 import { useEffect, useRef } from 'react';
 
@@ -72,18 +70,18 @@ struct ColorStop {
   float position;
 };
 
-#define COLOR_RAMP(colors, factor, finalColor) {              \\
-  int index = 0;                                            \\
-  for (int i = 0; i < 2; i++) {                               \\
-     ColorStop currentColor = colors[i];                    \\
-     bool isInBetween = currentColor.position <= factor;    \\
-     index = int(mix(float(index), float(i), float(isInBetween))); \\
-  }                                                         \\
-  ColorStop currentColor = colors[index];                   \\
-  ColorStop nextColor = colors[index + 1];                  \\
-  float range = nextColor.position - currentColor.position; \\
-  float lerpFactor = (factor - currentColor.position) / range; \\
-  finalColor = mix(currentColor.color, nextColor.color, lerpFactor); \\
+#define COLOR_RAMP(colors, factor, finalColor) {              \
+  int index = 0;                                            \
+  for (int i = 0; i < 2; i++) {                               \
+     ColorStop currentColor = colors[i];                    \
+     bool isInBetween = currentColor.position <= factor;    \
+     index = int(mix(float(index), float(i), float(isInBetween))); \
+  }                                                         \
+  ColorStop currentColor = colors[index];                   \
+  ColorStop nextColor = colors[index + 1];                  \
+  float range = nextColor.position - currentColor.position; \
+  float lerpFactor = (factor - currentColor.position) / range; \
+  finalColor = mix(currentColor.color, nextColor.color, lerpFactor); \
 }
 
 void main() {
@@ -111,15 +109,7 @@ void main() {
 }
 `;
 
-export interface AuroraProps {
-  colorStops?: string[];
-  amplitude?: number;
-  blend?: number;
-  time?: number;
-  speed?: number;
-}
-
-export default function Aurora(props: AuroraProps) {
+export default function Aurora(props: any) {
   const { colorStops = ['#5227FF', '#7cff67', '#5227FF'], amplitude = 1.0, blend = 0.5 } = props;
   const propsRef = useRef(props);
   propsRef.current = props;
@@ -159,7 +149,7 @@ export default function Aurora(props: AuroraProps) {
       delete geometry.attributes.uv;
     }
 
-    const colorStopsArray = colorStops.map(hex => {
+    const colorStopsArray = colorStops.map((hex: string) => {
       const c = new Color(hex);
       return [c.r, c.g, c.b];
     });
@@ -187,7 +177,7 @@ export default function Aurora(props: AuroraProps) {
       program.uniforms.uAmplitude.value = propsRef.current.amplitude ?? 1.0;
       program.uniforms.uBlend.value = propsRef.current.blend ?? blend;
       const stops = propsRef.current.colorStops ?? colorStops;
-      program.uniforms.uColorStops.value = stops.map(hex => {
+      program.uniforms.uColorStops.value = stops.map((hex: string) => {
         const c = new Color(hex);
         return [c.r, c.g, c.b];
       });

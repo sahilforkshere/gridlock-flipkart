@@ -88,8 +88,8 @@ export default function PredictPage() {
       >
         {/* Header */}
         <motion.div variants={reduced ? {} : item} className="mb-6">
-          <h1 className="text-xl font-medium text-zinc-50">Predict Congestion</h1>
-          <p className="text-sm text-zinc-400 leading-relaxed mt-0.5">Fill in event details or load a demo scenario</p>
+          <h1 className="font-display text-2xl font-bold text-[var(--text-primary)] tracking-tight">Predict Congestion</h1>
+          <p className="text-sm text-[var(--text-secondary)] leading-relaxed mt-0.5">Fill in event details or load a demo scenario</p>
         </motion.div>
 
         {/* Demo Scenarios — full width */}
@@ -102,7 +102,7 @@ export default function PredictPage() {
           {/* Left — Event Form */}
           <div className="lg:col-span-2">
             <motion.div variants={reduced ? {} : item}
-              className="bg-[#0f0f12] border border-[#1c1c21] rounded-lg overflow-hidden">
+              className="surface rounded-lg overflow-hidden flex-1 h-full">
               <EventForm
                 onSubmit={handleSubmit}
                 loading={loading}
@@ -115,28 +115,30 @@ export default function PredictPage() {
           {/* Right — Map + "No prediction yet" */}
           <div className="lg:col-span-3 flex flex-col gap-4">
             <motion.div variants={reduced ? {} : item}
-              className="bg-[#0f0f12] border border-[#1c1c21] rounded-lg overflow-hidden">
-              <div className="px-4 py-3 border-b border-[#1c1c21] flex items-center gap-2">
-                <IconMapPin size={13} stroke={1.5} className="text-zinc-500" />
-                <span className="text-xs uppercase tracking-widest text-zinc-500">Click map to set coordinates</span>
+              className="surface rounded-lg overflow-hidden flex flex-col min-h-[400px]">
+              <div className="px-4 py-3 border-b border-[var(--border-subtle)] flex items-center gap-2 shrink-0">
+                <IconMapPin size={13} stroke={1.5} className="text-[var(--text-secondary)]" />
+                <span className="text-xs uppercase tracking-widest text-[var(--text-tertiary)]">Click map to set coordinates</span>
               </div>
-              <div className="p-2">
-                <BengaluruMap
-                  onMapClick={(lat, lng) => setPickedLocation({ lat, lng })}
-                  pickedLocation={pickedLocation}
-                  entries={[]}
-                  height="320px"
-                />
+              <div className="flex-1 relative">
+                <div className="absolute inset-0">
+                  <BengaluruMap
+                    onMapClick={(lat, lng) => setPickedLocation({ lat, lng })}
+                    pickedLocation={pickedLocation}
+                    entries={[]}
+                    height="100%"
+                  />
+                </div>
               </div>
             </motion.div>
 
             <motion.div variants={reduced ? {} : item}
-              className="bg-[#0f0f12] border border-[#1c1c21] rounded-lg flex flex-col items-center justify-center px-6 py-12 gap-3 text-center">
-              <IconScanEye size={36} stroke={1} className="text-zinc-700" />
-              <p className="text-sm text-zinc-400">No prediction yet</p>
-              <p className="text-xs text-zinc-600">
+              className="surface border-dashed border-2 border-[var(--border-subtle)] bg-transparent rounded-lg flex flex-col items-center justify-center px-6 py-12 gap-3 text-center">
+              <IconScanEye size={36} stroke={1} className="text-[var(--text-tertiary)]" />
+              <p className="text-sm text-[var(--text-secondary)]">No prediction yet</p>
+              <p className="text-xs text-[var(--text-tertiary)]">
                 Load a demo scenario or configure the event, then click{" "}
-                <span className="text-zinc-500 font-medium">Run Prediction</span>
+                <span className="text-[var(--text-primary)] font-medium">Run Prediction</span>
               </p>
             </motion.div>
           </div>

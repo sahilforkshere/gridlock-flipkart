@@ -3,17 +3,11 @@ import { useEffect, useState, useRef, useCallback } from "react"
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
 import { IconX, IconArrowRight, IconCheck } from "@tabler/icons-react"
 import { PredictResponse } from "@/types"
+import { SEVERITY_COLORS } from "@/lib/severity"
 
 const MODELS = ["LightGBM", "XGBoost", "MLP", "TabNet", "Meta-learner"]
 const TICK_INTERVAL = 400 // ms between each checklist item
 const RESULT_DELAY = 300  // ms pause after last checkmark before result appears
-
-const SEV_COLOR: Record<string, string> = {
-  Low: "#22c55e",
-  Medium: "#eab308",
-  High: "#f97316",
-  Critical: "#ef4444",
-}
 
 /* ── Typewriter hook ── */
 function useTypewriter(text: string, speed = 18, enabled = true) {
@@ -46,7 +40,7 @@ function useTypewriter(text: string, speed = 18, enabled = true) {
 }
 
 /* ── Glow result card wrapper ── */
-function ResultGlow({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+function ResultGlow({ children, color, className = "" }: { children: React.ReactNode; color: string; className?: string }) {
   const ref = useRef<HTMLDivElement>(null)
 
   return (
@@ -54,12 +48,14 @@ function ResultGlow({ children, className = "" }: { children: React.ReactNode; c
       ref={ref}
       className={`relative rounded-lg p-px ${className}`}
       style={{
-        background: `linear-gradient(135deg, rgba(124,58,237,0.5), rgba(6,182,212,0.4), rgba(124,58,237,0.3))`,
+        background: `linear-gradient(135deg, ${color}80, transparent, ${color}40)`,
         backgroundSize: "200% 200%",
         animation: "glowShift 3s ease-in-out infinite alternate",
+        boxShadow: `0 0 40px -10px ${color}40`,
       }}
     >
-      <div className="rounded-[7px] bg-[#0f0f12] h-full w-full overflow-hidden">
+      <div className="rounded-[7px] bg-[var(--bg-elevated-1)] h-full w-full overflow-hidden relative z-10">
+        <div className="absolute inset-0 opacity-10" style={{ background: `radial-gradient(circle at top right, ${color}, transparent 60%)` }} />
         {children}
       </div>
     </div>
@@ -186,7 +182,7 @@ export default function AnalysisPopup({ open, loading, result, error, onClose, o
   }, [loading, result, open, tryRevealResult])
 
   const displayResult = apiResultRef.current || result
-  const color = displayResult ? (SEV_COLOR[displayResult.severity_label] ?? "#f97316") : "#f97316"
+  const color = displayResult ? (SEVERITY_COLORS[displayResult.severity_label] ?? "var(--accent-signal)") : "var(--accent-signal)"
 
   return (
         <AnimatePresence>
@@ -209,15 +205,15 @@ export default function AnalysisPopup({ open, loading, result, error, onClose, o
                 className="w-full max-w-md"
                 onClick={e => e.stopPropagation()}
               >
-                <div className="relative rounded-lg p-px bg-[#1c1c21]">
-                  <div className="rounded-[7px] bg-[#0f0f12] h-full w-full overflow-hidden">
+                <div className="surface shadow-xl border border-[var(--border-subtle)] rounded-xl overflow-hidden">
+                  <div className="rounded-[7px] bg-[var(--bg-base)] h-full w-full overflow-hidden">
                     {/* Header */}
-                    <div className="px-5 py-4 border-b border-[#1c1c21] flex items-center justify-between gap-3">
-                      <p className="text-sm font-medium text-zinc-50 whitespace-nowrap">
+                    <div className="px-5 py-4 border-b border-[var(--border-subtle)] bg-[var(--bg-elevated-1)] flex items-center justify-between gap-3">
+                      <p className="text-sm font-medium text-[var(--text-primary)] whitespace-nowrap">
                         {error ? "Prediction Failed" : !checklistDone ? "Running Analysis\u2026" : showResult ? "Analysis Complete" : "Finalizing\u2026"}
                       </p>
                       <button onClick={onClose} className="btn-ghost !p-1.5">
-                        <IconX size={15} stroke={1.5} />
+                        <IconX size={15} stroke={1.5} className="text-[var(--text-secondary)]" />
                       </button>
                     </div>
 
@@ -236,7 +232,7 @@ export default function AnalysisPopup({ open, loading, result, error, onClose, o
                               <div
                                 className={`w-4.5 h-4.5 rounded-full border flex items-center justify-center shrink-0 transition-colors duration-200 ${checked ? "anim-check" : ""}`}
                                 style={{
-                                  borderColor: checked ? color : active ? "#3f3f46" : "#2a2a32",
+                                  borderColor: checked ? color : active ? "var(--text-tertiary)" : "var(--border-strong)",
                                   background: checked ? color : "transparent",
                                   width: "18px",
                                   height: "18px",
@@ -245,21 +241,20 @@ export default function AnalysisPopup({ open, loading, result, error, onClose, o
                                 {checked && <IconCheck size={10} stroke={2.5} color="#000" />}
                                 {active && (
                                   <div
-                                    className="w-2 h-2 rounded-full animate-pulse"
-                                    style={{ background: "#52525b" }}
+                                    className="w-2 h-2 rounded-full animate-pulse bg-[var(--text-tertiary)]"
                                   />
                                 )}
                               </div>
-                              <span className={`text-xs font-medium transition-colors duration-200 ${checked ? "text-zinc-200" : "text-zinc-600"}`}>
+                              <span className={`text-xs font-medium transition-colors duration-200 ${checked ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}`}>
                                 {m}
                               </span>
                               {active && (
-                                <span className="text-[10px] text-zinc-600 animate-pulse ml-auto">
+                                <span className="text-[10px] text-[var(--text-secondary)] animate-pulse ml-auto">
                                   processing…
                                 </span>
                               )}
                               {checked && (
-                                <span className="text-[10px] text-zinc-600 ml-auto">
+                                <span className="text-[10px] text-[var(--text-secondary)] ml-auto">
                                   ✓
                                 </span>
                               )}
@@ -270,10 +265,9 @@ export default function AnalysisPopup({ open, loading, result, error, onClose, o
 
                       {/* Progress bar (during checklist) */}
                       {!checklistDone && (
-                        <div className="w-full h-[2px] bg-[#1c1c21] rounded-full overflow-hidden">
+                        <div className="w-full h-[2px] bg-[var(--bg-elevated-2)] rounded-full overflow-hidden">
                           <motion.div
-                            className="h-full rounded-full"
-                            style={{ background: "linear-gradient(to right, #7C3AED, #06B6D4)" }}
+                            className="h-full rounded-full bg-[var(--accent-signal)]"
                             initial={{ width: "0%" }}
                             animate={{ width: `${(checkedCount / MODELS.length) * 85}%` }}
                             transition={{ duration: 0.3, ease: "easeOut" }}
@@ -289,8 +283,8 @@ export default function AnalysisPopup({ open, loading, result, error, onClose, o
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                           >
-                            <ResultGlow>
-                              <div className="p-4 space-y-3">
+                            <ResultGlow color={color}>
+                              <div className="p-4 space-y-3 relative z-20">
                                 {/* Severity + confidence — pop in with scale */}
                                 <AnimatePresence>
                                   {showSeverity && (
@@ -301,12 +295,12 @@ export default function AnalysisPopup({ open, loading, result, error, onClose, o
                                       className="flex items-baseline justify-between"
                                     >
                                       <span
-                                        className="text-2xl font-bold tracking-tight"
+                                        className="font-display text-2xl font-bold tracking-tight"
                                         style={{ color }}
                                       >
                                         {displayResult.severity_label.toUpperCase()}
                                       </span>
-                                      <span className="text-lg font-medium tabular-nums text-zinc-50">
+                                      <span className="font-data text-xl font-medium tabular-nums text-[var(--text-primary)]">
                                         {(displayResult.confidence * 100).toFixed(1)}%
                                       </span>
                                     </motion.div>
@@ -316,10 +310,10 @@ export default function AnalysisPopup({ open, loading, result, error, onClose, o
                                 <div className="h-px w-full" style={{ background: `${color}30` }} />
 
                                 {/* Typewriter description */}
-                                <p className="text-xs text-zinc-400 leading-relaxed min-h-[40px]">
+                                <p className="text-sm text-[var(--text-secondary)] leading-relaxed min-h-[40px]">
                                   {reduced ? summaryText : displayed}
                                   {!reduced && !twDone && (
-                                    <span className="inline-block w-[2px] h-[12px] bg-zinc-400 ml-0.5 animate-pulse" />
+                                    <span className="inline-block w-[2px] h-[12px] bg-[var(--text-secondary)] ml-0.5 animate-pulse" />
                                   )}
                                 </p>
                               </div>
@@ -330,8 +324,8 @@ export default function AnalysisPopup({ open, loading, result, error, onClose, o
 
                       {/* Error */}
                       {error && !loading && (
-                        <div className="rounded-lg border border-[#ef4444]/30 bg-[#ef4444]/5 px-4 py-3">
-                          <p className="text-xs text-[#ef4444]">{error}</p>
+                        <div className="rounded-lg border border-[var(--severity-critical)] bg-[#ef4444]/5 px-4 py-3">
+                          <p className="text-xs text-[var(--severity-critical)]">{error}</p>
                         </div>
                       )}
                     </div>
@@ -345,10 +339,10 @@ export default function AnalysisPopup({ open, loading, result, error, onClose, o
                           transition={{ duration: 0.2, ease: "easeOut" }}
                           className="px-5 pb-5 flex items-center gap-2"
                         >
-                          <button onClick={onViewFull} className="btn-primary flex-1 justify-center gap-1.5">
+                          <button onClick={onViewFull} className="btn-primary flex-1 justify-center gap-1.5 py-2">
                             View Full Analysis <IconArrowRight size={13} />
                           </button>
-                          <button onClick={onClose} className="btn-secondary">
+                          <button onClick={onClose} className="btn-secondary py-2 border border-[var(--border-strong)] hover:bg-[var(--bg-elevated-2)]">
                             Close
                           </button>
                         </motion.div>

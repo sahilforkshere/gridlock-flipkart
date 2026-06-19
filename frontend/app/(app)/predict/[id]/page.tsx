@@ -74,12 +74,12 @@ export default function PredictDetailPage() {
         <div>
           <button
             onClick={() => router.push("/predict")}
-            className="btn-ghost !px-0 !py-0 !gap-1 mb-2 text-zinc-500 hover:text-zinc-300"
+            className="btn-ghost !px-0 !py-0 !gap-1 mb-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
           >
             <IconArrowLeft size={13} /> Back
           </button>
-          <h1 className="text-xl font-medium text-zinc-50">Full Analysis</h1>
-          <p className="text-sm text-zinc-400 mt-0.5">
+          <h1 className="font-display text-2xl font-bold text-[var(--text-primary)] tracking-tight">Full Analysis</h1>
+          <p className="font-data text-sm text-[var(--text-secondary)] mt-0.5">
             {new Date(entry.timestamp).toLocaleString([], {
               month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
             })}
@@ -100,19 +100,19 @@ export default function PredictDetailPage() {
         {/* Left — Input summary */}
         <motion.div
           variants={reduced ? {} : item}
-          className="lg:col-span-2 bg-[#0f0f12] border border-[#1c1c21] rounded-lg overflow-hidden self-start"
+          className="lg:col-span-2 surface border border-[var(--border-subtle)] rounded-lg overflow-hidden self-start"
         >
-          <div className="px-4 py-3 border-b border-[#1c1c21]">
-            <span className="text-xs uppercase tracking-widest text-zinc-500">Your Input</span>
+          <div className="px-4 py-3 border-b border-[var(--border-subtle)] bg-[var(--bg-elevated-1)]">
+            <span className="text-[10px] uppercase tracking-[0.08em] text-[var(--text-secondary)] font-medium">Your Input</span>
           </div>
-          <div className="px-4 py-1 divide-y divide-[#1c1c21]">
+          <div className="px-4 py-1 divide-y divide-[var(--border-subtle)]">
             {inputRows.map(({ label, value, icon: Icon }) => (
               <div key={label} className="flex items-center justify-between py-2.5 gap-2">
                 <div className="flex items-center gap-2 min-w-0">
-                  <Icon size={12} stroke={1.5} className="text-zinc-600 shrink-0" />
-                  <span className="text-xs uppercase tracking-widest text-zinc-500">{label}</span>
+                  <Icon size={12} stroke={1.5} className="text-[var(--text-tertiary)] shrink-0" />
+                  <span className="text-[10px] uppercase tracking-[0.08em] text-[var(--text-secondary)]">{label}</span>
                 </div>
-                <span className="text-xs text-zinc-300 font-medium capitalize text-right truncate max-w-[55%]">{value}</span>
+                <span className={`text-xs text-[var(--text-primary)] font-medium capitalize text-right truncate max-w-[55%] ${label === 'Coordinates' || label === 'Time' ? 'font-data' : ''}`}>{value}</span>
               </div>
             ))}
           </div>
@@ -123,23 +123,23 @@ export default function PredictDetailPage() {
           variants={reduced ? {} : { hidden: {}, show: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } } }}
           initial="hidden"
           animate="show"
-          className="lg:col-span-3 space-y-4"
+          className="lg:col-span-3 flex flex-col gap-4"
         >
           <motion.div variants={reduced ? {} : item}>
             <SeverityCard result={entry} />
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <motion.div variants={reduced ? {} : item}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+            <motion.div variants={reduced ? {} : item} className="h-full">
               <ProbabilityChart probs={entry.class_probabilities} />
             </motion.div>
 
             <motion.div variants={reduced ? {} : item}
-              className="bg-[#0f0f12] border border-[#1c1c21] rounded-lg overflow-hidden">
-              <div className="px-4 py-3 border-b border-[#1c1c21]">
-                <span className="text-xs uppercase tracking-widest text-zinc-500">Geo Context</span>
+              className="surface border border-[var(--border-subtle)] rounded-lg overflow-hidden h-full">
+              <div className="px-4 py-3 border-b border-[var(--border-subtle)] bg-[var(--bg-elevated-1)]">
+                <span className="text-[10px] uppercase tracking-[0.08em] text-[var(--text-secondary)] font-medium">Geo Context</span>
               </div>
-              <div className="px-4 py-1 divide-y divide-[#1c1c21]">
+              <div className="px-4 py-1 divide-y divide-[var(--border-subtle)]">
                 {[
                   { k: "Location Cluster", v: `Zone ${entry.location_cluster}` },
                   { k: "Severity Level",   v: `Level ${entry.severity_level} / 3` },
@@ -147,8 +147,8 @@ export default function PredictDetailPage() {
                   { k: "Base Learners",    v: "LGBM · XGB · MLP · TabNet" },
                 ].map(({ k, v }) => (
                   <div key={k} className="flex justify-between items-center py-2.5">
-                    <span className="text-xs uppercase tracking-widest text-zinc-500">{k}</span>
-                    <span className="text-xs text-zinc-300 font-medium">{v}</span>
+                    <span className="text-[10px] uppercase tracking-[0.08em] text-[var(--text-secondary)]">{k}</span>
+                    <span className="font-data text-xs text-[var(--text-primary)] font-medium">{v}</span>
                   </div>
                 ))}
               </div>

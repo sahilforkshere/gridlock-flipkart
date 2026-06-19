@@ -51,34 +51,34 @@ export default function ModelPage() {
     >
       {/* Header */}
       <motion.div variants={reduced ? {} : item}>
-        <h1 className="text-xl font-medium text-zinc-50">Model Performance</h1>
-        <p className="text-sm text-zinc-400 leading-relaxed mt-0.5">
+        <h1 className="font-display text-2xl font-bold text-[var(--text-primary)] tracking-tight">Model Performance</h1>
+        <p className="text-sm text-[var(--text-secondary)] leading-relaxed mt-0.5">
           Stacked ensemble — LightGBM + XGBoost + MLP + TabNet → meta-learner
         </p>
       </motion.div>
 
       {/* Summary strip */}
       <motion.div variants={reduced ? {} : item}
-        className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-[#1c1c21] border border-[#1c1c21] rounded-lg overflow-hidden">
+        className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-[var(--border-subtle)] border border-[var(--border-subtle)] rounded-lg overflow-hidden">
         {SUMMARY.map(({ label, value, icon: Icon }) => (
-          <div key={label} className="bg-[#09090b] p-5 flex flex-col gap-3">
+          <div key={label} className="bg-[var(--bg-elevated-1)] p-5 flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <p className="text-xs uppercase tracking-widest text-zinc-500">{label}</p>
-              <Icon size={14} stroke={1.5} className="text-zinc-600" />
+              <p className="text-[10px] uppercase tracking-[0.08em] text-[var(--text-tertiary)]">{label}</p>
+              <Icon size={14} stroke={1.5} className="text-[var(--text-secondary)]" />
             </div>
-            <p className="text-sm font-medium text-zinc-50">{value}</p>
+            <p className="font-data text-sm font-medium text-[var(--text-primary)]">{value}</p>
           </div>
         ))}
       </motion.div>
 
       {/* Section tabs */}
-      <motion.div variants={reduced ? {} : item} className="flex gap-1">
+      <motion.div variants={reduced ? {} : item} className="flex gap-2">
         {SECTIONS.map(s => (
           <button
             key={s}
             onClick={() => setActive(s)}
-            className={`px-4 py-1.5 text-xs font-medium rounded-lg transition-colors
-              ${active === s ? "bg-[#1c1c21] text-zinc-50" : "text-zinc-500 hover:text-zinc-300 hover:bg-[#141417]"}`}
+            className={`px-5 py-2 text-xs font-medium rounded-lg transition-colors
+              ${active === s ? "bg-[var(--accent-signal)]/10 text-[var(--accent-signal)] border border-[var(--accent-signal)]/20 shadow-[0_0_15px_rgba(242,169,59,0.15)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated-2)] border border-transparent"}`}
           >
             {s}
           </button>
@@ -98,18 +98,18 @@ export default function ModelPage() {
             key={c.file}
             variants={reduced ? {} : gridItem}
             whileHover={reduced ? {} : { y: -3, transition: { duration: 0.15 } }}
-            className="bg-[#0f0f12] border border-[#1c1c21] rounded-lg overflow-hidden cursor-pointer group hover:border-[#2a2a32] transition-colors"
+            className="surface border border-[var(--border-subtle)] rounded-lg overflow-hidden cursor-pointer group hover:border-[var(--border-strong)] hover:shadow-lg hover:shadow-black/20 transition-all"
             onClick={() => setZoom(c)}
           >
-            <div className="px-4 py-3 border-b border-[#1c1c21] flex items-center justify-between">
-              <span className="text-xs text-zinc-400 font-medium">{c.title}</span>
-              <IconZoomIn size={13} stroke={1.5} className="text-zinc-600 group-hover:text-zinc-400 transition-colors" />
+            <div className="px-4 py-3 border-b border-[var(--border-subtle)] flex items-center justify-between bg-[var(--bg-elevated-1)]">
+              <span className="text-xs text-[var(--text-secondary)] font-medium group-hover:text-[var(--text-primary)] transition-colors">{c.title}</span>
+              <IconZoomIn size={13} stroke={1.5} className="text-[var(--text-tertiary)] group-hover:text-[var(--accent-signal)] transition-colors" />
             </div>
             <div className="relative w-full bg-[#0a0a0d]" style={{ aspectRatio: "16/9" }}>
               <Image src={`/model-charts/${c.file}`} alt={c.title} fill className="object-contain p-2" sizes="(max-width: 768px) 100vw, 50vw" />
             </div>
-            <div className="px-4 py-3">
-              <p className="text-xs text-zinc-500 leading-relaxed">{c.description}</p>
+            <div className="px-4 py-3 bg-[var(--bg-elevated-1)] h-full">
+              <p className="text-xs text-[var(--text-secondary)] leading-relaxed">{c.description}</p>
             </div>
           </motion.div>
         ))}
@@ -123,7 +123,7 @@ export default function ModelPage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-6"
+            className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-6 backdrop-blur-sm"
             onClick={() => setZoom(null)}
           >
             <motion.div
@@ -131,16 +131,16 @@ export default function ModelPage() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.96, opacity: 0 }}
               transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="relative max-w-5xl w-full bg-[#0f0f12] border border-[#1c1c21] rounded-lg overflow-hidden"
+              className="relative max-w-5xl w-full surface shadow-2xl border border-[var(--border-subtle)] rounded-lg overflow-hidden"
               onClick={e => e.stopPropagation()}
             >
-              <div className="px-5 py-3 border-b border-[#1c1c21] flex items-start justify-between gap-4">
+              <div className="px-5 py-4 border-b border-[var(--border-subtle)] bg-[var(--bg-elevated-1)] flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-sm font-medium text-zinc-50">{zoom.title}</p>
-                  <p className="text-xs text-zinc-500 mt-0.5">{zoom.description}</p>
+                  <p className="text-sm font-medium text-[var(--text-primary)]">{zoom.title}</p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-0.5">{zoom.description}</p>
                 </div>
-                <button onClick={() => setZoom(null)} className="btn-ghost !p-1.5 shrink-0">
-                  <IconX size={16} stroke={1.5} />
+                <button onClick={() => setZoom(null)} className="btn-ghost !p-1.5 shrink-0 hover:bg-[var(--bg-elevated-2)]">
+                  <IconX size={16} stroke={1.5} className="text-[var(--text-secondary)]" />
                 </button>
               </div>
               <div className="relative w-full bg-[#0a0a0d]" style={{ aspectRatio: "16/9" }}>

@@ -35,15 +35,15 @@ export default function GlowBorder({ children, className = "", innerClassName = 
           "--go": "0",
           background: `radial-gradient(
             280px circle at var(--gx) var(--gy),
-            rgba(124,58,237,calc(var(--go) * 0.55)),
-            rgba(6,182,212,calc(var(--go) * 0.2)),
-            #1c1c21 55%
+            rgba(242, 169, 59, calc(var(--go) * 0.45)),
+            rgba(242, 169, 59, calc(var(--go) * 0.1)),
+            var(--border-subtle) 55%
           )`,
           transition: "background 0.1s ease",
         } as React.CSSProperties
       }
     >
-      <div className={`rounded-[7px] bg-[#0f0f12] h-full w-full overflow-hidden ${innerClassName}`}>
+      <div className={`rounded-[7px] bg-[var(--bg-elevated)] h-full w-full overflow-hidden ${innerClassName}`}>
         {children}
       </div>
     </div>

@@ -1,36 +1,36 @@
 export const SEVERITY_COLORS: Record<string, string> = {
-  Low:      "#2ecc71",
-  Medium:   "#f39c12",
-  High:     "#e67e22",
-  Critical: "#e74c3c",
+  Low:      "#34c77b",
+  Medium:   "#f2a93b",
+  High:     "#f2873b",
+  Critical: "#e5484d",
 }
 
 export const SEVERITY_BG: Record<string, string> = {
-  Low:      "bg-green-500",
-  Medium:   "bg-yellow-500",
-  High:     "bg-orange-500",
-  Critical: "bg-red-500",
+  Low:      "bg-[#34c77b]",
+  Medium:   "bg-[#f2a93b]",
+  High:     "bg-[#f2873b]",
+  Critical: "bg-[#e5484d]",
 }
 
 export const SEVERITY_TEXT: Record<string, string> = {
-  Low:      "text-green-400",
-  Medium:   "text-yellow-400",
-  High:     "text-orange-400",
-  Critical: "text-red-400",
+  Low:      "text-[#34c77b]",
+  Medium:   "text-[#f2a93b]",
+  High:     "text-[#f2873b]",
+  Critical: "text-[#e5484d]",
 }
 
 export const SEVERITY_BORDER: Record<string, string> = {
-  Low:      "border-green-500",
-  Medium:   "border-yellow-500",
-  High:     "border-orange-500",
-  Critical: "border-red-500",
+  Low:      "border-[#34c77b]",
+  Medium:   "border-[#f2a93b]",
+  High:     "border-[#f2873b]",
+  Critical: "border-[#e5484d]",
 }
 
 export const SEVERITY_EMOJI: Record<string, string> = {
-  Low:      "🟢",
-  Medium:   "🟡",
-  High:     "🟠",
-  Critical: "🔴",
+  Low:      "",
+  Medium:   "",
+  High:     "",
+  Critical: "",
 }
 
 export const EVENT_CAUSES = [

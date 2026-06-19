@@ -6,36 +6,36 @@ export default function ProbabilityChart({ probs }: { probs: Record<string, numb
   const data = Object.entries(probs).map(([name, value]) => ({
     name,
     value: parseFloat((value * 100).toFixed(1)),
-    fill: SEVERITY_COLORS[name] ?? "#52525b",
+    fill: SEVERITY_COLORS[name] ?? "var(--border-strong)",
   }))
 
   return (
-    <div className="surface rounded anim-in">
-      <div className="px-4 py-3 border-b border-[#1c1c21]">
-        <span className="text-xs font-medium text-[#a1a1aa]">Class Probabilities</span>
+    <div className="surface rounded-lg anim-in overflow-hidden border border-[var(--border-subtle)] h-full flex flex-col">
+      <div className="px-4 py-3 border-b border-[var(--border-subtle)] bg-[var(--bg-elevated-1)] shrink-0">
+        <span className="text-xs font-medium text-[var(--text-secondary)]">Class Probabilities</span>
       </div>
-      <div className="p-4">
+      <div className="p-4 flex-1">
         <ResponsiveContainer width="100%" height={160}>
           <BarChart data={data} margin={{ top: 10, right: 4, left: -22, bottom: 0 }}>
             <XAxis
               dataKey="name"
-              tick={{ fill: "#52525b", fontSize: 10 }}
+              tick={{ fill: "var(--text-secondary)", fontSize: 10, fontFamily: "var(--font-mono)" }}
               axisLine={false} tickLine={false}
             />
             <YAxis
-              tick={{ fill: "#52525b", fontSize: 9 }}
+              tick={{ fill: "var(--text-tertiary)", fontSize: 9, fontFamily: "var(--font-mono)" }}
               axisLine={false} tickLine={false}
               domain={[0, 100]} unit="%"
             />
             <Tooltip
-              contentStyle={{ background: "#0f0f12", border: "1px solid #1c1c21", borderRadius: 4, fontSize: 11 }}
-              labelStyle={{ color: "#a1a1aa" }}
-              itemStyle={{ color: "#e4e4e7" }}
+              contentStyle={{ background: "var(--bg-elevated-2)", border: "1px solid var(--border-subtle)", borderRadius: 4, fontSize: 11, fontFamily: "var(--font-mono)" }}
+              labelStyle={{ color: "var(--text-secondary)" }}
+              itemStyle={{ color: "var(--text-primary)" }}
               formatter={(v: any) => [`${v}%`, "Probability"]}
-              cursor={{ fill: "rgba(255,255,255,0.02)" }}
+              cursor={{ fill: "var(--bg-elevated-1)" }}
             />
             <Bar dataKey="value" radius={[2, 2, 0, 0]} maxBarSize={36}>
-              {data.map((d, i) => <Cell key={i} fill={d.fill} fillOpacity={0.75} />)}
+              {data.map((d, i) => <Cell key={i} fill={d.fill} fillOpacity={0.85} />)}
             </Bar>
           </BarChart>
         </ResponsiveContainer>

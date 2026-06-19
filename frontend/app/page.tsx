@@ -1,22 +1,19 @@
 "use client"
 import Link from "next/link"
 import { motion, useScroll, useTransform } from "framer-motion"
-import { useRef } from "react"
+import { useRef, useState, useEffect } from "react"
 import SmoothScroll from "@/components/providers/SmoothScroll"
-import { Brain, GitBranch, Map, Zap, Shield, TrendingUp, ArrowRight, ChevronRight } from "lucide-react"
+import { Brain, GitBranch, Map, Zap, Shield, TrendingUp, ArrowRight, ChevronRight, Trophy, Wrench, Flag, HardHat } from "lucide-react"
+import RoadGrid from "@/components/ui/RoadGrid"
 import Aurora from "@/components/ui/Aurora"
+import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect"
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
   show: (d = 0) => ({ opacity: 1, y: 0, transition: { duration: 0.6, delay: d, ease: [0.22, 1, 0.36, 1] as const } }),
 }
 
-const STATS = [
-  { value: "96.2%", label: "Prediction Accuracy" },
-  { value: "4", label: "Base ML Models" },
-  { value: "20", label: "Geo Clusters" },
-  { value: "<120ms", label: "Inference Latency" },
-]
+
 
 const FEATURES = [
   { icon: Brain, title: "Stacked Ensemble", body: "LightGBM, XGBoost, MLP, and TabNet feed into a meta-learner \u2014 the same architecture used in top-tier production forecasting systems." },
@@ -27,40 +24,24 @@ const FEATURES = [
   { icon: TrendingUp, title: "Live History Tracking", body: "All predictions persist in-browser. Reviewable as a time-series table with severity distribution at a glance." },
 ]
 
-function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
-  return (
-    <div className="inline-flex items-center justify-center">
-      <motion.div
-        initial={{ width: "0%" }}
-        animate={{ width: "fit-content" }}
-        transition={{ duration: 1.5, delay: delay, ease: "linear" }}
-        className="overflow-hidden whitespace-nowrap"
-      >
-        <span className="pr-1">{text}</span>
-      </motion.div>
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, repeat: Infinity, repeatType: "reverse" }}
-        className="inline-block w-[4px] md:w-[6px] h-[0.9em] bg-cyan-400 ml-1 rounded-sm shrink-0"
-        style={{ transform: "translateY(0.05em)" }}
-      />
-    </div>
-  )
-}
-
 export default function LandingPage() {
   const heroRef = useRef<HTMLDivElement>(null)
   const { scrollY } = useScroll()
-  const blobY = useTransform(scrollY, [0, 600], [0, -80])
   const progressScale = useTransform(scrollY, [0, 4000], [0, 1])
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    return scrollY.on("change", (latest) => {
+      setScrolled(latest > 50)
+    })
+  }, [scrollY])
 
   return (
     <SmoothScroll>
       {/* scroll progress bar */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-[2px] z-50 origin-left"
-        style={{ background: "linear-gradient(to right, #7C3AED, #06B6D4)", scaleX: progressScale }}
+        style={{ background: "var(--accent-signal)", scaleX: progressScale }}
       />
 
       {/* Floating Nav */}
@@ -69,24 +50,23 @@ export default function LandingPage() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="pointer-events-auto flex items-center justify-between px-6 py-3 border border-white/[0.08] rounded-full backdrop-blur-xl bg-[#0A0A0F]/60 shadow-[0_8px_32px_rgba(0,0,0,0.4)] w-full max-w-4xl"
+          className={`pointer-events-auto flex items-center justify-between px-6 py-3 border rounded-full backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] w-full max-w-4xl transition-colors duration-300 ${scrolled ? 'bg-[var(--bg-base)]/95 border-[var(--border-strong)]' : 'bg-[var(--bg-elevated)]/60 border-[var(--border-subtle)]'}`}
         >
           <div className="flex items-center gap-2">
             <motion.span
               animate={{ opacity: [1, 0.3, 1] }}
               transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-              className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.6)]"
+              className="w-1.5 h-1.5 rounded-full bg-[var(--data-live)] shadow-[0_0_8px_rgba(45,212,212,0.6)]"
             />
-            <span className="text-[#F5F5F7] font-semibold text-sm tracking-tight">ASTRAM</span>
-            <span className="text-white/30 text-sm">/</span>
-            <span className="text-white/40 text-sm font-light">Gridlock</span>
+            <span className="text-[var(--text-primary)] font-semibold text-sm tracking-tight">ASTRAM</span>
+
           </div>
 
           <div className="flex items-center gap-6">
-            <Link href="/model" className="hidden sm:block text-xs font-medium text-white/50 hover:text-white/90 transition-colors">
+            <Link href="/model" className="hidden sm:block text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
               Model Details
             </Link>
-            <Link href="/dashboard" className="group flex items-center gap-1.5 text-xs font-semibold text-white transition-colors bg-white/10 hover:bg-white/20 px-4 py-1.5 rounded-full">
+            <Link href="/dashboard" className="group flex items-center gap-1.5 text-xs font-semibold text-[var(--text-primary)] transition-colors bg-[var(--bg-elevated-2)] hover:bg-[var(--border-hover)] px-4 py-1.5 rounded-full">
               Open App
               <ChevronRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
             </Link>
@@ -95,34 +75,46 @@ export default function LandingPage() {
       </div>
 
       {/* Hero */}
-      <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden px-6 bg-[#0A0A0F]">
-        <Aurora
-          colorStops={["#06B6D4", "#7C3AED", "#111118"]}
-          blend={0.5}
-          amplitude={1.0}
-          speed={1}
-        />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_20%,transparent_100%)] pointer-events-none" />
+      <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden px-6 bg-[var(--bg-base)]">
+        {/* Full-screen Aurora Background */}
+        <div className="absolute inset-0 z-0 opacity-60 pointer-events-none" style={{ filter: "blur(30px)" }}>
+          <Aurora
+            colorStops={["#00ff87", "#B497CF", "#6100FF"]}
+            blend={1.0}
+            amplitude={2.0}
+            speed={0.8}
+          />
+        </div>
+
+        <RoadGrid />
 
         <div className="relative z-10 max-w-4xl mx-auto text-center">
           <motion.div custom={0} variants={fadeUp} initial="hidden" animate="show"
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/[0.04] text-[11px] text-white/50 mb-8 tracking-wider uppercase">
-            <span className="w-1 h-1 rounded-full bg-violet-400" />
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-elevated)] text-[11px] text-[var(--text-secondary)] mb-8 tracking-wider uppercase">
+            <span className="w-1 h-1 rounded-full bg-[var(--accent-signal)]" />
             Bengaluru Traffic Intelligence
           </motion.div>
 
-          <motion.h1 custom={0.08} variants={fadeUp} initial="hidden" animate="show"
-            className="text-[clamp(2.8rem,7vw,6rem)] font-bold tracking-[-0.03em] leading-[1.05] text-[#F5F5F7] mb-6">
-            Predict congestion.
-            <br />
-            <span className="text-transparent bg-clip-text inline-block"
-              style={{ backgroundImage: "linear-gradient(135deg, #7C3AED, #06B6D4)" }}>
-              <TypewriterText text="Before it happens." delay={0.6} />
-            </span>
-          </motion.h1>
+          <motion.div custom={0.08} variants={fadeUp} initial="hidden" animate="show" className="relative mb-6">
+            <h1 className="font-display text-[clamp(2.8rem,7vw,6rem)] font-bold tracking-[-0.03em] leading-[1.05] text-[var(--text-primary)] relative z-10 drop-shadow-lg">
+              Predict congestion
+            </h1>
+            <div className="flex justify-center">
+              <TypewriterEffectSmooth
+                words={[
+                  { text: "Before ", className: "text-[var(--accent-signal)] font-display text-[clamp(2.8rem,7vw,6rem)] font-bold tracking-[-0.03em] leading-[1.05] drop-shadow-lg" },
+                  { text: " it ", className: "text-[var(--accent-signal)] font-display text-[clamp(2.8rem,7vw,6rem)] font-bold tracking-[-0.03em] leading-[1.05] drop-shadow-lg" },
+                  { text: "happens.", className: "text-[var(--accent-signal)] font-display text-[clamp(2.8rem,7vw,6rem)] font-bold tracking-[-0.03em] leading-[1.05] drop-shadow-lg" },
+                ]
+                }
+                className="justify-center"
+                cursorClassName="bg-[var(--accent-signal)] h-[clamp(2.8rem,7vw,5.5rem)]"
+              />
+            </div>
+          </motion.div>
 
           <motion.p custom={0.16} variants={fadeUp} initial="hidden" animate="show"
-            className="text-[clamp(1rem,2vw,1.2rem)] text-white/45 max-w-xl mx-auto leading-relaxed mb-10">
+            className="text-[clamp(1rem,2vw,1.2rem)] text-[var(--text-secondary)] max-w-xl mx-auto leading-relaxed mb-10 relative z-10">
             Event-driven severity classification for Bengaluru using a stacked ensemble of
             LightGBM, XGBoost, MLP, and TabNet. Input to recommendation in under 120ms.
           </motion.p>
@@ -130,13 +122,12 @@ export default function LandingPage() {
           <motion.div custom={0.24} variants={fadeUp} initial="hidden" animate="show"
             className="flex items-center justify-center gap-3 flex-wrap pointer-events-auto">
             <Link href="/predict"
-              className="group relative inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold text-white overflow-hidden transition-all duration-200 hover:shadow-[0_0_30px_rgba(124,58,237,0.35)] active:scale-[0.98]"
-              style={{ background: "linear-gradient(135deg, #7C3AED, #06B6D4)" }}>
+              className="group relative inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold text-[var(--bg-base)] overflow-hidden transition-all duration-200 hover:shadow-[0_0_30px_rgba(242,169,59,0.35)] active:scale-[0.98] bg-[var(--accent-signal)] hover:bg-[var(--accent-signal-hover)]">
               Run a Prediction
               <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
             </Link>
             <Link href="/dashboard"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium text-white/60 border border-white/10 hover:border-white/20 hover:text-white/80 transition-all duration-200 active:scale-[0.98]">
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium text-[var(--text-secondary)] border border-[var(--border-subtle)] hover:border-[var(--border-hover)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition-all duration-200 active:scale-[0.98]">
               View Dashboard
             </Link>
           </motion.div>
@@ -145,7 +136,7 @@ export default function LandingPage() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 0.6 }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center">
           <motion.div animate={{ y: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-            className="w-4 h-4 text-white/20">
+            className="w-4 h-4 text-[var(--border-hover)]">
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M8 3v10M4 9l4 4 4-4" />
             </svg>
@@ -153,49 +144,67 @@ export default function LandingPage() {
         </motion.div>
       </section>
 
-      {/* Stats */}
-      <section className="py-16 px-6 border-y border-white/[0.06]">
-        <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-px bg-white/[0.06]">
-          {STATS.map(({ value, label }, i) => (
-            <motion.div key={label}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] }}
-              className="bg-[#0A0A0F] px-8 py-8 flex flex-col gap-1">
-              <span className="text-[clamp(1.8rem,4vw,2.4rem)] font-bold tracking-tight tabular-nums text-[#F5F5F7]">{value}</span>
-              <span className="text-xs text-white/35 uppercase tracking-wider">{label}</span>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
       {/* Features */}
-      <section className="py-24 px-6">
+      <section className="py-16 px-6">
         <div className="max-w-5xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }} className="mb-14 text-center">
-            <p className="text-[11px] text-white/30 uppercase tracking-[0.18em] mb-3">Under the hood</p>
-            <h2 className="text-[clamp(1.8rem,4vw,3rem)] font-bold tracking-[-0.02em] text-[#F5F5F7]">Built for real-world traffic</h2>
+            <p className="text-[11px] text-[var(--text-tertiary)] uppercase tracking-[0.18em] mb-3">Under the hood</p>
+            <h2 className="font-display text-[clamp(1.8rem,4vw,3rem)] font-bold tracking-[-0.02em] text-[var(--text-primary)]">Built for real-world traffic</h2>
           </motion.div>
           <div className="relative w-full overflow-hidden flex py-10 -mx-6 px-6"
             style={{ WebkitMaskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)", maskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)" }}>
             <div className="flex gap-4 anim-marquee w-max group hover:anim-marquee-paused">
               {[...FEATURES, ...FEATURES].map(({ icon: Icon, title, body }, i) => (
-                <div key={`${title}-${i}`} className="group/card relative w-[300px] shrink-0 p-6 rounded-xl border border-white/[0.07] bg-[#111118] hover:border-white/[0.14] transition-colors cursor-default">
-                  <div className="w-8 h-8 rounded-lg mb-4 flex items-center justify-center border border-white/[0.08]"
-                    style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.15), rgba(6,182,212,0.1))" }}>
-                    <Icon size={15} className="text-violet-400" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-[#F5F5F7] mb-2">{title}</h3>
-                  <p className="text-xs text-white/40 leading-relaxed line-clamp-2">{body}</p>
+                <div key={`${title}-${i}`} className="group/card relative w-[300px] shrink-0 p-6 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] hover:border-[var(--border-hover)] transition-colors cursor-default">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center border border-[var(--border-subtle)] bg-[var(--bg-elevated-2)]">
+                      <Icon size={15} className="text-[var(--accent-signal)]" />
+                    </div>
 
-                  {/* Hover Popup */}
-                  <div className="absolute left-0 bottom-full mb-3 w-full opacity-0 translate-y-2 group-hover/card:opacity-100 group-hover/card:translate-y-0 pointer-events-none transition-all duration-300 z-20">
-                    {/* <div className="bg-[#0A0A0F] border border-white/10 rounded-lg p-4 shadow-2xl shadow-black/50">
-                      <p className="text-xs text-white/70 leading-relaxed">{body}</p>
-                    </div> */}
+                    {/* Small data preview instead of generic icon */}
+                    <div className="h-8 flex items-center justify-end text-[var(--text-tertiary)] opacity-60">
+                      {title === "Stacked Ensemble" && (
+                        <div className="flex gap-1 h-3">
+                          <div className="w-4 bg-[var(--severity-low)] rounded-sm" />
+                          <div className="w-3 bg-[var(--severity-medium)] rounded-sm" />
+                          <div className="w-5 bg-[var(--severity-high)] rounded-sm" />
+                          <div className="w-2 bg-[var(--severity-critical)] rounded-sm" />
+                        </div>
+                      )}
+                      {title === "KMeans Geo-Clustering" && (
+                        <div className="flex gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--text-tertiary)]" />
+                          <span className="w-2 h-2 rounded-full bg-[var(--text-secondary)] -mt-1" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--text-tertiary)]" />
+                        </div>
+                      )}
+                      {title === "Sub-Second Prediction" && (
+                        <span className="font-data text-[10px]">&lt;120ms</span>
+                      )}
+                      {title === "Resource Recommendations" && (
+                        <div className="flex gap-1">
+                          <span className="px-1.5 py-0.5 text-[8px] bg-[var(--border-subtle)] rounded uppercase">Officers</span>
+                        </div>
+                      )}
+                      {title === "Event-Aware Features" && (
+                        <div className="flex gap-0.5">
+                          <span className="w-4 h-2 bg-[var(--accent-signal)] opacity-50 rounded-sm" />
+                          <span className="w-2 h-2 bg-[var(--border-subtle)] rounded-sm" />
+                        </div>
+                      )}
+                      {title === "Live History Tracking" && (
+                        <div className="flex items-end gap-0.5 h-4">
+                          <div className="w-1 h-2 bg-[var(--text-tertiary)]" />
+                          <div className="w-1 h-4 bg-[var(--text-secondary)]" />
+                          <div className="w-1 h-3 bg-[var(--text-tertiary)]" />
+                        </div>
+                      )}
+                    </div>
                   </div>
+
+                  <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-2">{title}</h3>
+                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed line-clamp-2">{body}</p>
                 </div>
               ))}
             </div>
@@ -204,30 +213,64 @@ export default function LandingPage() {
       </section>
 
       {/* How it works */}
-      <section className="py-24 px-6 border-t border-white/[0.06]">
+      <section className="py-16 px-6 border-t border-[var(--border-subtle)]">
         <div className="max-w-4xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }} className="mb-14 text-center">
-            <p className="text-[11px] text-white/30 uppercase tracking-[0.18em] mb-3">Pipeline</p>
-            <h2 className="text-[clamp(1.8rem,4vw,3rem)] font-bold tracking-[-0.02em] text-[#F5F5F7]">Input to insight in 3 steps</h2>
+            <p className="text-[11px] text-[var(--text-tertiary)] uppercase tracking-[0.18em] mb-3">Pipeline</p>
+            <h2 className="font-display text-[clamp(1.8rem,4vw,3rem)] font-bold tracking-[-0.02em] text-[var(--text-primary)]">Input to insight in 3 steps</h2>
           </motion.div>
           <div className="relative max-w-3xl mx-auto py-10">
             {/* Connecting Vertical Line */}
-            <div className="absolute left-7 md:left-1/2 top-0 bottom-0 w-px bg-white/5 -translate-x-1/2" />
+            <div className="absolute left-7 md:left-1/2 top-0 bottom-0 w-px bg-[var(--border-subtle)] -translate-x-1/2" />
             <motion.div
               initial={{ scaleY: 0 }}
               whileInView={{ scaleY: 1 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 1.5, ease: "easeInOut" }}
-              className="absolute left-7 md:left-1/2 top-0 bottom-0 w-px -translate-x-1/2 bg-gradient-to-b from-[#7C3AED] via-[#06B6D4] to-transparent origin-top anim-timeline-glow"
+              className="absolute left-7 md:left-1/2 top-0 bottom-0 w-px -translate-x-1/2 bg-[var(--accent-signal)] origin-top opacity-50"
             />
 
-            <div className="flex flex-col gap-12 md:gap-16">
+            <div className="flex flex-col gap-10">
               {[
-                { n: "01", title: "Describe the event", body: "Location, type, cause, time, corridor, police zone, vehicle mix \u2014 17 features total." },
-                { n: "02", title: "Ensemble inference", body: "4 base models score independently. Meta-learner blends outputs into a calibrated severity class + probability distribution." },
-                { n: "03", title: "Act on the output", body: "Severity badge, per-class probabilities, and specific resource deployment recommendations \u2014 ready to share." },
-              ].map(({ n, title, body }, i) => (
+                {
+                  n: "01",
+                  title: "Describe the event",
+                  body: "Location, type, cause, time, corridor, police zone, vehicle mix \u2014 17 features total.",
+                  preview: (
+                    <div className="flex flex-col gap-2 p-3 bg-[var(--bg-elevated-2)] rounded border border-[var(--border-subtle)]">
+                      <div className="flex justify-between items-center"><span className="text-[9px] uppercase text-[var(--text-tertiary)]">LATITUDE</span><span className="font-data text-[10px] text-[var(--text-secondary)]">12.9716</span></div>
+                      <div className="h-px bg-[var(--border-subtle)]" />
+                      <div className="flex justify-between items-center"><span className="text-[9px] uppercase text-[var(--text-tertiary)]">EVENT CAUSE</span><span className="font-data text-[10px] text-[var(--text-secondary)]">Public Event</span></div>
+                    </div>
+                  )
+                },
+                {
+                  n: "02",
+                  title: "Ensemble inference",
+                  body: "4 base models score independently. Meta-learner blends outputs into a calibrated severity class + probability distribution.",
+                  preview: (
+                    <div className="flex gap-2 p-3 bg-[var(--bg-elevated-2)] rounded border border-[var(--border-subtle)] justify-center">
+                      {["LGBM", "XGB", "MLP", "TAB"].map(m => (
+                        <div key={m} className="px-1.5 py-1 text-[9px] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded text-[var(--text-secondary)]">{m}</div>
+                      ))}
+                    </div>
+                  )
+                },
+                {
+                  n: "03",
+                  title: "Act on the output",
+                  body: "Severity badge, per-class probabilities, and specific resource deployment recommendations \u2014 ready to share.",
+                  preview: (
+                    <div className="flex items-center gap-3 p-3 bg-[var(--bg-elevated-2)] rounded border border-[var(--border-subtle)]">
+                      <div className="px-2 py-1 rounded-full bg-[#e5484d]/10 border border-[#e5484d]/20 text-[#e5484d] text-[10px] font-medium flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#e5484d]" /> CRITICAL
+                      </div>
+                      <span className="font-data text-xs text-[var(--text-primary)]">94.2%</span>
+                    </div>
+                  )
+                },
+              ].map(({ n, title, body, preview }, i) => (
                 <motion.div key={n}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -235,19 +278,22 @@ export default function LandingPage() {
                   transition={{ duration: 0.6, delay: i * 0.15, ease: [0.22, 1, 0.36, 1] }}
                   className={`relative flex items-center gap-6 md:gap-10 ${i % 2 === 0 ? "md:flex-row-reverse" : "md:flex-row"}`}
                 >
-                  {/* Empty side for alternating layout */}
-                  <div className="hidden md:block flex-1" />
+                  {/* Preview side */}
+                  <div className="hidden md:flex flex-1 items-center justify-center opacity-60">
+                    <div className="w-48">
+                      {preview}
+                    </div>
+                  </div>
 
-                  {/* Glowing Node */}
-                  <div className="relative z-10 flex shrink-0 items-center justify-center w-14 h-14 rounded-full border border-white/10 bg-[#0A0A0F] shadow-[0_0_25px_rgba(124,58,237,0.15)] group hover:shadow-[0_0_35px_rgba(6,182,212,0.25)] transition-shadow duration-500">
-                    <span className="text-base font-bold tabular-nums text-transparent bg-clip-text"
-                      style={{ backgroundImage: "linear-gradient(135deg, #7C3AED, #06B6D4)" }}>{n}</span>
+                  {/* Node */}
+                  <div className="relative z-10 flex shrink-0 items-center justify-center w-14 h-14 rounded-full border border-[var(--accent-signal)] bg-[var(--bg-elevated)] shadow-[0_0_15px_rgba(242,169,59,0.15)] group hover:shadow-[0_0_25px_rgba(242,169,59,0.25)] transition-shadow duration-500">
+                    <span className="font-data text-base font-bold text-[var(--accent-signal)]">{n}</span>
                   </div>
 
                   {/* Content */}
                   <div className={`flex-1 pt-1 ${i % 2 === 0 ? "md:text-right" : "md:text-left"}`}>
-                    <h3 className="text-base font-semibold text-[#F5F5F7] mb-2">{title}</h3>
-                    <p className="text-xs text-white/40 leading-relaxed max-w-sm md:inline-block md:mx-auto md:mr-0">{body}</p>
+                    <h3 className="text-base font-semibold text-[var(--text-primary)] mb-2">{title}</h3>
+                    <p className="text-xs text-[var(--text-secondary)] leading-relaxed max-w-sm md:inline-block md:mx-auto md:mr-0">{body}</p>
                   </div>
                 </motion.div>
               ))}
@@ -257,34 +303,60 @@ export default function LandingPage() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-24 px-6">
-        <div className="max-w-6xl mx-auto text-center">
+      <section className="py-16 px-6">
+        <div className="max-w-7xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="relative rounded-2xl border border-white/[0.08] bg-[#111118] px-12 py-20 overflow-hidden">
+            className="relative rounded-3xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-6 md:px-12 py-16 overflow-hidden">
             <div className="absolute inset-0 pointer-events-none opacity-20"
-              style={{ background: "radial-gradient(ellipse at 50% 100%, rgba(124,58,237,0.4), transparent 60%)" }} />
+              style={{ background: "radial-gradient(ellipse at 50% 100%, rgba(242, 169, 59, 0.15), transparent 60%)" }} />
             <div className="relative z-10">
-              <p className="text-xs text-white/30 uppercase tracking-[0.18em] mb-4 font-medium">Try it now</p>
-              <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-bold tracking-[-0.02em] text-[#F5F5F7] mb-4">
-                See it predict a real scenario
+              <p className="text-[11px] text-[var(--text-tertiary)] uppercase tracking-[0.18em] mb-4 font-medium">Try it now</p>
+              <h2 className="font-display text-[clamp(1.8rem,4vw,2.5rem)] font-bold tracking-[-0.02em] text-[var(--text-primary)] mb-10">
+                Load a demo scenario
               </h2>
-              <p className="text-base text-white/50 mb-10 max-w-2xl mx-auto leading-relaxed">
-                Load one of four demo presets — cricket match at Chinnaswamy, ORR breakdown, procession, or road work — and get a severity prediction instantly.
-              </p>
-              <div className="flex items-center justify-center gap-3 flex-wrap">
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 w-full mx-auto mb-10 text-left">
+                {[
+                  { label: "Cricket at Chinnaswamy", tag: "Critical", icon: Trophy,  color: "var(--severity-critical)", bg: "bg-[#e5484d]/10", border: "border-[#e5484d]/30" },
+                  { label: "Breakdown on ORR",       tag: "High",     icon: Wrench,  color: "var(--severity-high)",     bg: "bg-[#f2873b]/10", border: "border-[#f2873b]/30" },
+                  { label: "Procession in CBD",      tag: "Medium",   icon: Flag,    color: "var(--severity-medium)",   bg: "bg-[#f2a93b]/10", border: "border-[#f2a93b]/30" },
+                  { label: "Road Work Off Peak",     tag: "Low",      icon: HardHat, color: "var(--severity-low)",      bg: "bg-[#34c77b]/10", border: "border-[#34c77b]/30" },
+                ].map((demo, i) => (
+                  <Link key={demo.label} href={`/predict?demo=${encodeURIComponent(demo.label)}`}
+                    className="group relative flex flex-col justify-between gap-4 p-5 rounded-2xl bg-[var(--bg-elevated-2)] border border-[var(--border-subtle)] overflow-hidden transition-all duration-300 hover:border-[var(--border-hover)] hover:-translate-y-1 hover:shadow-2xl z-10"
+                  >
+                    {/* Background Glow */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                      style={{ background: `radial-gradient(circle at top right, ${demo.color}15, transparent 70%)` }} />
+                    
+                    <div className="relative z-10 flex items-start justify-between">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${demo.bg} ${demo.border} border shadow-inner`}>
+                        <demo.icon size={18} style={{ color: demo.color }} />
+                      </div>
+                      <ArrowRight size={16} className="text-[var(--text-tertiary)] group-hover:text-[var(--text-primary)] group-hover:translate-x-1 transition-all duration-300" />
+                    </div>
+
+                    <div className="relative z-10 mt-2">
+                      <h3 className="text-[15px] font-semibold text-[var(--text-primary)] mb-1.5 line-clamp-2 leading-snug">{demo.label}</h3>
+                      <div className="flex items-center gap-1.5 mt-2">
+                        <span className="w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor]" style={{ color: demo.color, background: demo.color }} />
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">{demo.tag} SEVERITY</span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+
+              <div className="flex items-center justify-center gap-3 flex-wrap mt-8">
                 <Link href="/predict"
-                  className="group inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold text-white transition-all duration-200 hover:shadow-[0_0_30px_rgba(124,58,237,0.35)] active:scale-[0.98]"
-                  style={{ background: "linear-gradient(135deg, #7C3AED, #06B6D4)" }}>
-                  Run a Prediction
-                  <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
-                </Link>
-                <Link href="/model"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium text-white/50 border border-white/10 hover:border-white/20 hover:text-white/70 transition-all duration-200">
-                  View Model Metrics
+                  className="group relative inline-flex items-center gap-2 px-8 py-4 rounded-xl text-[15px] font-bold text-[var(--bg-base)] overflow-hidden transition-all duration-300 active:scale-[0.98] bg-[var(--accent-signal)] hover:shadow-[0_0_30px_rgba(242,169,59,0.35)]">
+                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                  <span className="relative z-10">Start from scratch</span>
+                  <ArrowRight size={18} className="relative z-10 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
             </div>
@@ -293,8 +365,8 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/[0.06] py-8 px-6">
-        <div className="max-w-6xl mx-auto flex items-center justify-between text-[11px] text-white/25">
+      <footer className="border-t border-[var(--border-subtle)] py-8 px-6 bg-[var(--bg-base)]">
+        <div className="max-w-6xl mx-auto flex items-center justify-between text-[11px] text-[var(--text-tertiary)]">
           <span>ASTRAM Gridlock — Bengaluru Traffic Intelligence</span>
           <span>Flipkart GridLock</span>
         </div>

@@ -11,9 +11,9 @@ import {
 
 const links = [
   { href: "/dashboard", label: "Dashboard", icon: IconLayoutDashboard },
-  { href: "/predict",   label: "Predict",   icon: IconScanEye },
-  { href: "/history",   label: "History",   icon: IconHistory },
-  { href: "/model",     label: "Model",     icon: IconChartBar },
+  { href: "/predict", label: "Predict", icon: IconScanEye },
+  { href: "/history", label: "History", icon: IconHistory },
+  { href: "/model", label: "Model", icon: IconChartBar },
 ]
 
 export default function Navbar() {
@@ -36,19 +36,18 @@ export default function Navbar() {
       {/* Desktop header */}
       <div className="sticky top-4 z-50 flex justify-center px-4 md:px-6 mb-6 pointer-events-none w-full">
         <header
-          className="pointer-events-auto flex items-center justify-between px-5 h-[52px] w-full max-w-5xl rounded-full border border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300"
+          className="pointer-events-auto flex items-center justify-between px-5 h-[52px] w-full max-w-5xl rounded-full border border-[var(--border-subtle)] shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300"
           style={{
             backdropFilter: "blur(16px)",
             WebkitBackdropFilter: "blur(16px)",
-            background: scrolled ? "rgba(9,9,11,0.85)" : "rgba(9,9,11,0.65)",
+            background: scrolled ? "rgba(21, 23, 27, 0.85)" : "rgba(21, 23, 27, 0.65)",
           }}
         >
           <Link href="/" className="flex items-center gap-3">
             <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.6)]" />
-              <span className="text-zinc-50 font-semibold text-[15px] tracking-tight">ASTRAM</span>
-              <span className="text-zinc-600 text-sm font-light">/</span>
-              <span className="text-zinc-500 text-[13px] font-light">Gridlock</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--data-live)] shadow-[0_0_8px_rgba(45,212,212,0.6)]" />
+              <span className="text-[var(--text-primary)] font-semibold text-[15px] tracking-tight">ASTRAM</span>
+
             </div>
           </Link>
 
@@ -62,8 +61,8 @@ export default function Navbar() {
                   href={href}
                   className={`relative flex items-center gap-2 px-4 py-1.5 text-xs font-medium rounded-full transition-all duration-200
                     ${active
-                      ? "text-zinc-50 bg-white/10 shadow-sm"
-                      : "text-zinc-400 hover:text-zinc-200 hover:bg-white/5"
+                      ? "text-[var(--text-primary)] bg-[var(--bg-elevated-2)] shadow-sm"
+                      : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated-2)]"
                     }`}
                 >
                   <Icon size={15} stroke={active ? 2 : 1.75} />
@@ -76,7 +75,7 @@ export default function Navbar() {
       </div>
 
       {/* Mobile bottom tab bar — visible only on mobile */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#09090b]/90 backdrop-blur-md border-t border-[#1c1c21] flex">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[var(--bg-elevated)]/90 backdrop-blur-md border-t border-[var(--border-subtle)] flex">
         {links.map(({ href, label, icon: Icon }) => {
           const active = isActive(href)
           return (
@@ -84,7 +83,7 @@ export default function Navbar() {
               key={href}
               href={href}
               className={`flex-1 flex flex-col items-center justify-center py-2.5 gap-1 transition-colors
-                ${active ? "text-orange-500" : "text-zinc-600 hover:text-zinc-400"}`}
+                ${active ? "text-[var(--accent-signal)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}
             >
               <Icon size={20} stroke={active ? 2 : 1.75} />
               <span className="text-[10px] font-medium">{label}</span>

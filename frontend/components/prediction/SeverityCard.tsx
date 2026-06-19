@@ -1,27 +1,7 @@
 "use client"
 import { useEffect, useState } from "react"
 import { PredictResponse } from "@/types"
-
-const SEV_COLOR: Record<string, string> = {
-  Low:      "#4ade80",
-  Medium:   "#facc15",
-  High:     "#fb923c",
-  Critical: "#f87171",
-}
-
-const SEV_TEXT: Record<string, string> = {
-  Low:      "text-[#4ade80]",
-  Medium:   "text-[#facc15]",
-  High:     "text-[#fb923c]",
-  Critical: "text-[#f87171]",
-}
-
-const SEV_BORDER: Record<string, string> = {
-  Low:      "border-l-[#4ade80]",
-  Medium:   "border-l-[#facc15]",
-  High:     "border-l-[#fb923c]",
-  Critical: "border-l-[#f87171]",
-}
+import { SEVERITY_COLORS } from "@/lib/severity"
 
 export default function SeverityCard({ result }: { result: PredictResponse }) {
   const { severity_label, severity_level, confidence, recommendations } = result
@@ -32,48 +12,51 @@ export default function SeverityCard({ result }: { result: PredictResponse }) {
     return () => clearTimeout(t)
   }, [confidence])
 
+  const color = SEVERITY_COLORS[severity_label] || "var(--border-strong)"
+
   return (
-    <div className={`surface rounded border-l-2 ${SEV_BORDER[severity_label] ?? "border-l-[#3f3f46]"} anim-in`}>
+    <div className={`surface rounded-lg border-l-[3px] anim-in overflow-hidden border-r border-t border-b border-r-[var(--border-subtle)] border-t-[var(--border-subtle)] border-b-[var(--border-subtle)]`}
+         style={{ borderLeftColor: color }}>
       {/* Header row */}
-      <div className="px-5 py-4 flex items-start justify-between border-b border-[#1c1c21]">
+      <div className="px-5 py-5 flex items-start justify-between border-b border-[var(--border-subtle)] bg-[var(--bg-elevated-1)]">
         <div>
-          <p className="text-[10px] text-[#52525b] uppercase tracking-wider mb-2">Congestion Severity</p>
+          <p className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.1em] mb-2 font-medium">Congestion Severity</p>
           <div className="flex items-baseline gap-2.5">
-            <span className={`text-3xl font-bold tracking-tight ${SEV_TEXT[severity_label]}`}>
+            <span className="font-display text-4xl font-bold tracking-tight" style={{ color }}>
               {severity_label.toUpperCase()}
             </span>
-            <span className="text-xs text-[#52525b]">Level {severity_level} / 3</span>
+            <span className="font-data text-xs text-[var(--text-secondary)]">Level {severity_level} / 3</span>
           </div>
         </div>
         <div className="text-right">
-          <p className="text-[10px] text-[#52525b] uppercase tracking-wider mb-2">Confidence</p>
-          <span className={`text-2xl font-bold tabular-nums ${SEV_TEXT[severity_label]}`}>
+          <p className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.1em] mb-2 font-medium">Confidence</p>
+          <span className="font-data text-3xl font-bold tabular-nums" style={{ color }}>
             {(confidence * 100).toFixed(1)}%
           </span>
         </div>
       </div>
 
       {/* Confidence bar */}
-      <div className="px-5 pt-3.5 pb-1">
-        <div className="w-full bg-[#141418] rounded-full h-[3px] overflow-hidden">
+      <div className="px-5 pt-4 pb-2 bg-[var(--bg-base)]">
+        <div className="w-full bg-[var(--bg-elevated-2)] rounded-full h-1.5 overflow-hidden">
           <div
-            className="h-[3px] rounded-full anim-bar"
-            style={{ width: `${bar}%`, background: SEV_COLOR[severity_label] ?? "#3f3f46", transition: "width 0.8s cubic-bezier(0.22,1,0.36,1)" }}
+            className="h-1.5 rounded-full anim-bar"
+            style={{ width: `${bar}%`, background: color, transition: "width 0.8s cubic-bezier(0.22,1,0.36,1)" }}
           />
         </div>
       </div>
 
       {/* Key metrics */}
-      <div className="px-5 py-4 grid grid-cols-2 gap-3">
-        <div className="bg-[#141418] rounded px-4 py-3 border border-[#1c1c21]">
-          <p className="text-[10px] text-[#52525b] uppercase tracking-wider mb-1">Officers</p>
-          <p className="text-[#e4e4e7] font-semibold text-lg tabular-nums">
+      <div className="px-5 py-4 grid grid-cols-2 gap-3 bg-[var(--bg-base)]">
+        <div className="bg-[var(--bg-elevated-1)] rounded px-4 py-3 border border-[var(--border-subtle)]">
+          <p className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.1em] mb-1 font-medium">Officers</p>
+          <p className="text-[var(--text-primary)] font-data text-xl tabular-nums">
             {recommendations.manpower_min}–{recommendations.manpower_max}
           </p>
         </div>
-        <div className="bg-[#141418] rounded px-4 py-3 border border-[#1c1c21]">
-          <p className="text-[10px] text-[#52525b] uppercase tracking-wider mb-1">Est. Delay</p>
-          <p className="text-[#e4e4e7] font-semibold text-lg tabular-nums">
+        <div className="bg-[var(--bg-elevated-1)] rounded px-4 py-3 border border-[var(--border-subtle)]">
+          <p className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-[0.1em] mb-1 font-medium">Est. Delay</p>
+          <p className="text-[var(--text-primary)] font-data text-xl tabular-nums">
             ~{recommendations.impact_minutes} min
           </p>
         </div>
