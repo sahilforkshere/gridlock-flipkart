@@ -12,19 +12,41 @@ const fadeUp = {
 
 const STATS = [
   { value: "96.2%", label: "Prediction Accuracy" },
-  { value: "4",     label: "Base ML Models" },
-  { value: "20",    label: "Geo Clusters" },
-  { value: "<120ms",label: "Inference Latency" },
+  { value: "4", label: "Base ML Models" },
+  { value: "20", label: "Geo Clusters" },
+  { value: "<120ms", label: "Inference Latency" },
 ]
 
 const FEATURES = [
-  { icon: Brain,      title: "Stacked Ensemble",       body: "LightGBM, XGBoost, MLP, and TabNet feed into a meta-learner — the same architecture used in top-tier production forecasting systems." },
-  { icon: Map,        title: "KMeans Geo-Clustering",  body: "20 Bengaluru-specific clusters learned from real GPS corridors, police station zones, and arterial road data." },
-  { icon: Zap,        title: "Sub-Second Prediction",  body: "Python FastAPI sidecar serving pre-trained .pkl models. Four severity classes with per-class probability output." },
-  { icon: Shield,     title: "Resource Recommendations", body: "Every prediction includes actionable deployment advice: police posts, diversion routes, peak-hour advisories." },
-  { icon: GitBranch,  title: "Event-Aware Features",   body: "Encodes event type, cause, time-of-day, day-of-week, corridor flags, and vehicle mix — 17 engineered features total." },
-  { icon: TrendingUp, title: "Live History Tracking",  body: "All predictions persist in-browser. Reviewable as a time-series table with severity distribution at a glance." },
+  { icon: Brain, title: "Stacked Ensemble", body: "LightGBM, XGBoost, MLP, and TabNet feed into a meta-learner \u2014 the same architecture used in top-tier production forecasting systems." },
+  { icon: Map, title: "KMeans Geo-Clustering", body: "20 Bengaluru-specific clusters learned from real GPS corridors, police station zones, and arterial road data." },
+  { icon: Zap, title: "Sub-Second Prediction", body: "Python FastAPI sidecar serving pre-trained .pkl models. Four severity classes with per-class probability output." },
+  { icon: Shield, title: "Resource Recommendations", body: "Every prediction includes actionable deployment advice: police posts, diversion routes, peak-hour advisories." },
+  { icon: GitBranch, title: "Event-Aware Features", body: "Encodes event type, cause, time-of-day, day-of-week, corridor flags, and vehicle mix \u2014 17 engineered features total." },
+  { icon: TrendingUp, title: "Live History Tracking", body: "All predictions persist in-browser. Reviewable as a time-series table with severity distribution at a glance." },
 ]
+
+function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
+  return (
+    <div className="inline-flex items-center justify-center">
+      <motion.div
+        initial={{ width: "0%" }}
+        animate={{ width: "fit-content" }}
+        transition={{ duration: 1.5, delay: delay, ease: "linear" }}
+        className="overflow-hidden whitespace-nowrap"
+      >
+        <span className="pr-1">{text}</span>
+      </motion.div>
+      <motion.span
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, repeat: Infinity, repeatType: "reverse" }}
+        className="inline-block w-[4px] md:w-[6px] h-[0.9em] bg-cyan-400 ml-1 rounded-sm shrink-0"
+        style={{ transform: "translateY(0.05em)" }}
+      />
+    </div>
+  )
+}
 
 export default function LandingPage() {
   const heroRef = useRef<HTMLDivElement>(null)
@@ -40,30 +62,36 @@ export default function LandingPage() {
         style={{ background: "linear-gradient(to right, #7C3AED, #06B6D4)", scaleX: progressScale }}
       />
 
-      {/* Nav */}
-      <motion.header
-        initial={{ opacity: 0, y: -12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed top-0 left-0 right-0 z-40 h-14 flex items-center px-6 border-b border-white/[0.06] backdrop-blur-md bg-[#0A0A0F]/80"
-      >
-        <div className="max-w-6xl w-full mx-auto flex items-center justify-between">
+      {/* Floating Nav */}
+      <div className="fixed top-0 left-0 right-0 z-50 flex justify-center px-6 pt-6 pointer-events-none">
+        <motion.header
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="pointer-events-auto flex items-center justify-between px-6 py-3 border border-white/[0.08] rounded-full backdrop-blur-xl bg-[#0A0A0F]/60 shadow-[0_8px_32px_rgba(0,0,0,0.4)] w-full max-w-4xl"
+        >
           <div className="flex items-center gap-2">
             <motion.span
               animate={{ opacity: [1, 0.3, 1] }}
               transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-              className="w-1.5 h-1.5 rounded-full bg-violet-500"
+              className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.6)]"
             />
             <span className="text-[#F5F5F7] font-semibold text-sm tracking-tight">ASTRAM</span>
             <span className="text-white/30 text-sm">/</span>
             <span className="text-white/40 text-sm font-light">Gridlock</span>
           </div>
-          <Link href="/dashboard" className="group flex items-center gap-1.5 text-xs font-medium text-white/60 hover:text-white/90 transition-colors">
-            Open App
-            <ChevronRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
-          </Link>
-        </div>
-      </motion.header>
+
+          <div className="flex items-center gap-6">
+            <Link href="/model" className="hidden sm:block text-xs font-medium text-white/50 hover:text-white/90 transition-colors">
+              Model Details
+            </Link>
+            <Link href="/dashboard" className="group flex items-center gap-1.5 text-xs font-semibold text-white transition-colors bg-white/10 hover:bg-white/20 px-4 py-1.5 rounded-full">
+              Open App
+              <ChevronRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
+            </Link>
+          </div>
+        </motion.header>
+      </div>
 
       {/* Hero */}
       <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden px-6">
@@ -88,9 +116,9 @@ export default function LandingPage() {
             className="text-[clamp(2.8rem,7vw,6rem)] font-bold tracking-[-0.03em] leading-[1.05] text-[#F5F5F7] mb-6">
             Predict congestion.
             <br />
-            <span className="text-transparent bg-clip-text"
+            <span className="text-transparent bg-clip-text inline-block"
               style={{ backgroundImage: "linear-gradient(135deg, #7C3AED, #06B6D4)" }}>
-              Before it happens.
+              <TypewriterText text="Before it happens." delay={0.6} />
             </span>
           </motion.h1>
 
@@ -151,23 +179,27 @@ export default function LandingPage() {
             <p className="text-[11px] text-white/30 uppercase tracking-[0.18em] mb-3">Under the hood</p>
             <h2 className="text-[clamp(1.8rem,4vw,3rem)] font-bold tracking-[-0.02em] text-[#F5F5F7]">Built for real-world traffic</h2>
           </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {FEATURES.map(({ icon: Icon, title, body }, i) => (
-              <motion.div key={title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
-                whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                className="p-6 rounded-xl border border-white/[0.07] bg-[#111118] hover:border-white/[0.14] transition-colors">
-                <div className="w-8 h-8 rounded-lg mb-4 flex items-center justify-center border border-white/[0.08]"
-                  style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.15), rgba(6,182,212,0.1))" }}>
-                  <Icon size={15} className="text-violet-400" />
+          <div className="relative w-full overflow-hidden flex py-10 -mx-6 px-6"
+            style={{ WebkitMaskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)", maskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)" }}>
+            <div className="flex gap-4 anim-marquee w-max group hover:anim-marquee-paused">
+              {[...FEATURES, ...FEATURES].map(({ icon: Icon, title, body }, i) => (
+                <div key={`${title}-${i}`} className="group/card relative w-[300px] shrink-0 p-6 rounded-xl border border-white/[0.07] bg-[#111118] hover:border-white/[0.14] transition-colors cursor-default">
+                  <div className="w-8 h-8 rounded-lg mb-4 flex items-center justify-center border border-white/[0.08]"
+                    style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.15), rgba(6,182,212,0.1))" }}>
+                    <Icon size={15} className="text-violet-400" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-[#F5F5F7] mb-2">{title}</h3>
+                  <p className="text-xs text-white/40 leading-relaxed line-clamp-2">{body}</p>
+
+                  {/* Hover Popup */}
+                  <div className="absolute left-0 bottom-full mb-3 w-full opacity-0 translate-y-2 group-hover/card:opacity-100 group-hover/card:translate-y-0 pointer-events-none transition-all duration-300 z-20">
+                    {/* <div className="bg-[#0A0A0F] border border-white/10 rounded-lg p-4 shadow-2xl shadow-black/50">
+                      <p className="text-xs text-white/70 leading-relaxed">{body}</p>
+                    </div> */}
+                  </div>
                 </div>
-                <h3 className="text-sm font-semibold text-[#F5F5F7] mb-2">{title}</h3>
-                <p className="text-xs text-white/40 leading-relaxed">{body}</p>
-              </motion.div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -180,26 +212,44 @@ export default function LandingPage() {
             <p className="text-[11px] text-white/30 uppercase tracking-[0.18em] mb-3">Pipeline</p>
             <h2 className="text-[clamp(1.8rem,4vw,3rem)] font-bold tracking-[-0.02em] text-[#F5F5F7]">Input to insight in 3 steps</h2>
           </motion.div>
-          <div className="relative">
-            <div className="hidden md:block absolute top-8 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="relative max-w-3xl mx-auto py-10">
+            {/* Connecting Vertical Line */}
+            <div className="absolute left-7 md:left-1/2 top-0 bottom-0 w-px bg-white/5 -translate-x-1/2" />
+            <motion.div
+              initial={{ scaleY: 0 }}
+              whileInView={{ scaleY: 1 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 1.5, ease: "easeInOut" }}
+              className="absolute left-7 md:left-1/2 top-0 bottom-0 w-px -translate-x-1/2 bg-gradient-to-b from-[#7C3AED] via-[#06B6D4] to-transparent origin-top anim-timeline-glow"
+            />
+
+            <div className="flex flex-col gap-12 md:gap-16">
               {[
-                { n: "01", title: "Describe the event", body: "Location, type, cause, time, corridor, police zone, vehicle mix — 17 features total." },
+                { n: "01", title: "Describe the event", body: "Location, type, cause, time, corridor, police zone, vehicle mix \u2014 17 features total." },
                 { n: "02", title: "Ensemble inference", body: "4 base models score independently. Meta-learner blends outputs into a calibrated severity class + probability distribution." },
-                { n: "03", title: "Act on the output", body: "Severity badge, per-class probabilities, and specific resource deployment recommendations — ready to share." },
+                { n: "03", title: "Act on the output", body: "Severity badge, per-class probabilities, and specific resource deployment recommendations \u2014 ready to share." },
               ].map(({ n, title, body }, i) => (
                 <motion.div key={n}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                  className="text-center">
-                  <div className="inline-flex items-center justify-center w-14 h-14 rounded-full border border-white/[0.08] bg-[#111118] mb-5">
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.6, delay: i * 0.15, ease: [0.22, 1, 0.36, 1] }}
+                  className={`relative flex items-center gap-6 md:gap-10 ${i % 2 === 0 ? "md:flex-row-reverse" : "md:flex-row"}`}
+                >
+                  {/* Empty side for alternating layout */}
+                  <div className="hidden md:block flex-1" />
+
+                  {/* Glowing Node */}
+                  <div className="relative z-10 flex shrink-0 items-center justify-center w-14 h-14 rounded-full border border-white/10 bg-[#0A0A0F] shadow-[0_0_25px_rgba(124,58,237,0.15)] group hover:shadow-[0_0_35px_rgba(6,182,212,0.25)] transition-shadow duration-500">
                     <span className="text-base font-bold tabular-nums text-transparent bg-clip-text"
                       style={{ backgroundImage: "linear-gradient(135deg, #7C3AED, #06B6D4)" }}>{n}</span>
                   </div>
-                  <h3 className="text-sm font-semibold text-[#F5F5F7] mb-2">{title}</h3>
-                  <p className="text-xs text-white/40 leading-relaxed">{body}</p>
+
+                  {/* Content */}
+                  <div className={`flex-1 pt-1 ${i % 2 === 0 ? "md:text-right" : "md:text-left"}`}>
+                    <h3 className="text-base font-semibold text-[#F5F5F7] mb-2">{title}</h3>
+                    <p className="text-xs text-white/40 leading-relaxed max-w-sm md:inline-block md:mx-auto md:mr-0">{body}</p>
+                  </div>
                 </motion.div>
               ))}
             </div>
@@ -209,21 +259,21 @@ export default function LandingPage() {
 
       {/* Final CTA */}
       <section className="py-24 px-6">
-        <div className="max-w-3xl mx-auto text-center">
+        <div className="max-w-6xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="relative rounded-2xl border border-white/[0.08] bg-[#111118] px-12 py-16 overflow-hidden">
+            className="relative rounded-2xl border border-white/[0.08] bg-[#111118] px-12 py-20 overflow-hidden">
             <div className="absolute inset-0 pointer-events-none opacity-20"
               style={{ background: "radial-gradient(ellipse at 50% 100%, rgba(124,58,237,0.4), transparent 60%)" }} />
             <div className="relative z-10">
-              <p className="text-[11px] text-white/30 uppercase tracking-[0.18em] mb-4">Try it now</p>
-              <h2 className="text-[clamp(1.6rem,4vw,2.6rem)] font-bold tracking-[-0.02em] text-[#F5F5F7] mb-3">
+              <p className="text-xs text-white/30 uppercase tracking-[0.18em] mb-4 font-medium">Try it now</p>
+              <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-bold tracking-[-0.02em] text-[#F5F5F7] mb-4">
                 See it predict a real scenario
               </h2>
-              <p className="text-sm text-white/40 mb-8 max-w-md mx-auto leading-relaxed">
+              <p className="text-base text-white/50 mb-10 max-w-2xl mx-auto leading-relaxed">
                 Load one of four demo presets — cricket match at Chinnaswamy, ORR breakdown, procession, or road work — and get a severity prediction instantly.
               </p>
               <div className="flex items-center justify-center gap-3 flex-wrap">
@@ -247,7 +297,7 @@ export default function LandingPage() {
       <footer className="border-t border-white/[0.06] py-8 px-6">
         <div className="max-w-6xl mx-auto flex items-center justify-between text-[11px] text-white/25">
           <span>ASTRAM Gridlock — Bengaluru Traffic Intelligence</span>
-          <span>Flipkart Grid 7.0</span>
+          <span>Flipkart GridLock</span>
         </div>
       </footer>
     </SmoothScroll>

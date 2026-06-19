@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { motion, useReducedMotion } from "framer-motion"
 import dynamic from "next/dynamic"
@@ -18,13 +18,14 @@ const BengaluruMap = dynamic(() => import("@/components/map/BengaluruMap"), { ss
 export default function PredictPage() {
   const reduced = useReducedMotion()
   const router = useRouter()
-  const [loading, setLoading]               = useState(false)
-  const [result, setResult]                 = useState<PredictResponse | null>(null)
-  const [error, setError]                   = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [result, setResult] = useState<PredictResponse | null>(null)
+  const [error, setError] = useState<string | null>(null)
   const [pickedLocation, setPickedLocation] = useState<{ lat: number; lng: number } | null>(null)
-  const [demoPreset, setDemoPreset]         = useState<PredictRequest | null>(null)
-  const [popupOpen, setPopupOpen]           = useState(false)
-  const [savedId, setSavedId]               = useState<string | null>(null)
+  const [demoPreset, setDemoPreset] = useState<PredictRequest | null>(null)
+  const [popupOpen, setPopupOpen] = useState(false)
+  const [savedId, setSavedId] = useState<string | null>(null)
+  const [closing, setClosing] = useState(false)
 
   const handleSubmit = async (req: PredictRequest) => {
     setLoading(true)
@@ -32,6 +33,7 @@ export default function PredictPage() {
     setResult(null)
     setSavedId(null)
     setPopupOpen(true)
+    setClosing(false)
     try {
       const res = await predictEvent(req)
       const entry = saveEntry(req, res)
@@ -51,21 +53,30 @@ export default function PredictPage() {
     setError(null)
   }
 
-  const handleViewFull = () => {
+  const handleViewFull = useCallback(() => {
     if (savedId) {
-      setPopupOpen(false)
-      router.push(`/predict/${savedId}`)
+      // Fade modal out first so it isn't a hard cut
+      setClosing(true)
+      setTimeout(() => {
+        setPopupOpen(false)
+        router.push(`/predict/${savedId}`)
+      }, 150)
     }
-  }
+  }, [savedId, router])
+
+  const handleClose = useCallback(() => {
+    setClosing(true)
+    setTimeout(() => setPopupOpen(false), 100)
+  }, [])
 
   return (
     <>
       <AnalysisPopup
-        open={popupOpen}
+        open={popupOpen && !closing}
         loading={loading}
         result={result}
         error={error}
-        onClose={() => setPopupOpen(false)}
+        onClose={handleClose}
         onViewFull={handleViewFull}
       />
 
@@ -81,13 +92,15 @@ export default function PredictPage() {
           <p className="text-sm text-zinc-400 leading-relaxed mt-0.5">Fill in event details or load a demo scenario</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-          {/* Left — Demo + Form + Map */}
-          <div className="lg:col-span-2 flex flex-col gap-4">
-            <motion.div variants={reduced ? {} : item}>
-              <DemoScenarios onLoad={handleDemoLoad} />
-            </motion.div>
+        {/* Demo Scenarios — full width */}
+        <motion.div variants={reduced ? {} : item} className="mb-4">
+          <DemoScenarios onLoad={handleDemoLoad} />
+        </motion.div>
 
+        {/* Main grid: Input Form (left) | Map + Idle state (right) */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+          {/* Left — Event Form */}
+          <div className="lg:col-span-2">
             <motion.div variants={reduced ? {} : item}
               className="bg-[#0f0f12] border border-[#1c1c21] rounded-lg overflow-hidden">
               <EventForm
@@ -97,7 +110,10 @@ export default function PredictPage() {
                 externalPreset={demoPreset}
               />
             </motion.div>
+          </div>
 
+          {/* Right — Map + "No prediction yet" */}
+          <div className="lg:col-span-3 flex flex-col gap-4">
             <motion.div variants={reduced ? {} : item}
               className="bg-[#0f0f12] border border-[#1c1c21] rounded-lg overflow-hidden">
               <div className="px-4 py-3 border-b border-[#1c1c21] flex items-center gap-2">
@@ -109,16 +125,13 @@ export default function PredictPage() {
                   onMapClick={(lat, lng) => setPickedLocation({ lat, lng })}
                   pickedLocation={pickedLocation}
                   entries={[]}
-                  height="220px"
+                  height="320px"
                 />
               </div>
             </motion.div>
-          </div>
 
-          {/* Right — idle state / prompt */}
-          <div className="lg:col-span-3 space-y-4">
             <motion.div variants={reduced ? {} : item}
-              className="bg-[#0f0f12] border border-[#1c1c21] rounded-lg flex flex-col items-center justify-center px-6 py-20 gap-3 text-center">
+              className="bg-[#0f0f12] border border-[#1c1c21] rounded-lg flex flex-col items-center justify-center px-6 py-12 gap-3 text-center">
               <IconScanEye size={36} stroke={1} className="text-zinc-700" />
               <p className="text-sm text-zinc-400">No prediction yet</p>
               <p className="text-xs text-zinc-600">

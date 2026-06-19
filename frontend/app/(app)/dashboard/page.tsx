@@ -147,17 +147,19 @@ export default function Dashboard() {
       {/* Main grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Map */}
-        <GlowBorder className="lg:col-span-2">
-          <motion.div variants={reduced ? {} : item}>
-            <div className="px-4 py-3 border-b border-[#1c1c21] flex items-center justify-between">
+        <GlowBorder className="lg:col-span-2 h-full" innerClassName="flex flex-col">
+          <motion.div variants={reduced ? {} : item} className="flex flex-col h-full">
+            <div className="px-4 py-3 border-b border-[#1c1c21] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2">
                 <IconMapPin size={13} stroke={1.5} className="text-zinc-500" />
                 <span className="text-xs text-zinc-400">Incident Map</span>
               </div>
               <span className="text-xs uppercase tracking-widest text-zinc-600">Bengaluru</span>
             </div>
-            <div className="p-3">
-              <BengaluruMap entries={history} height="370px" />
+            <div className="p-3 flex-1 relative min-h-[370px]">
+              <div className="absolute inset-3">
+                <BengaluruMap entries={history} height="100%" />
+              </div>
             </div>
           </motion.div>
         </GlowBorder>
@@ -228,8 +230,8 @@ export default function Dashboard() {
                 <div className="flex flex-col items-center justify-center px-4 py-10 gap-2">
                   <IconClockHour4 size={28} stroke={1} className="text-zinc-700" />
                   <p className="text-xs text-zinc-500">No data yet</p>
-                  <Link href="/predict" className="text-xs text-orange-500 hover:text-orange-400 transition-colors mt-1">
-                    Run first prediction →
+                  <Link href="/predict" className="btn-primary mt-2">
+                    Run First Prediction <IconArrowRight size={14} />
                   </Link>
                 </div>
               ) : (
@@ -254,13 +256,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {history.length === 0 && (
-        <motion.div variants={reduced ? {} : item} className="text-center pt-2">
-          <Link href="/predict" className="btn-primary">
-            Run First Prediction <IconArrowRight size={14} />
-          </Link>
-        </motion.div>
-      )}
     </motion.div>
   )
 }

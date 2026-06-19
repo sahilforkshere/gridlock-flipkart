@@ -30,22 +30,22 @@ export default function EventForm({ onSubmit, loading, pickedLocation, externalP
   const [meta, setMeta] = useState<MetaResponse | null>(null)
   const [formError, setFormError] = useState<string | null>(null)
   const [form, setForm] = useState<PredictRequest>({
-    latitude:       12.9716,
-    longitude:      77.5946,
-    event_type:     "planned",
-    event_cause:    "public_event",
-    start_hour:     now.getHours(),
-    day_of_week:    now.getDay() === 0 ? 6 : now.getDay() - 1,
-    month:          now.getMonth() + 1,
-    day:            now.getDate(),
-    corridor:       undefined,
+    latitude: 12.9716,
+    longitude: 77.5946,
+    event_type: "planned",
+    event_cause: "public_event",
+    start_hour: now.getHours(),
+    day_of_week: now.getDay() === 0 ? 6 : now.getDay() - 1,
+    month: now.getMonth() + 1,
+    day: now.getDate(),
+    corridor: undefined,
     police_station: undefined,
-    zone:           undefined,
-    veh_type:       undefined,
-    duration_mins:  undefined,
+    zone: undefined,
+    veh_type: undefined,
+    duration_mins: undefined,
   })
 
-  useEffect(() => { getMeta().then(setMeta).catch(() => {}) }, [])
+  useEffect(() => { getMeta().then(setMeta).catch(() => { }) }, [])
   useEffect(() => {
     if (pickedLocation) setForm(f => ({ ...f, latitude: pickedLocation.lat, longitude: pickedLocation.lng }))
   }, [pickedLocation])
@@ -109,24 +109,26 @@ export default function EventForm({ onSubmit, loading, pickedLocation, externalP
       {/* Date & Time */}
       <div className="px-4 py-4 space-y-3">
         <p className="text-[10px] text-[#3f3f46] uppercase tracking-[0.12em] font-medium">Date & Time</p>
-        <div className="grid grid-cols-4 gap-2">
-          {([
-            { label: "Hour",  key: "start_hour", min: 0,  max: 23 },
-            { label: "Day",   key: "day",        min: 1,  max: 31 },
-            { label: "Month", key: "month",      min: 1,  max: 12 },
-          ] as const).map(f => (
-            <Field key={f.key} label={f.label}>
-              <input type="number" min={f.min} max={f.max} value={(form as any)[f.key]}
-                onChange={e => set(f.key as keyof PredictRequest, parseInt(e.target.value))}
-                className={inputCls} />
-            </Field>
-          ))}
-          <Field label="Weekday">
-            <select value={form.day_of_week} onChange={e => set("day_of_week", parseInt(e.target.value))} className={selectCls}>
-              {["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((d,i) => <option key={i} value={i}>{d}</option>)}
-            </select>
-          </Field>
-        </div>
+        <Field label="Select Event Time">
+          <input
+            type="datetime-local"
+            min={new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
+            value={`${new Date().getFullYear()}-${form.month.toString().padStart(2, '0')}-${form.day.toString().padStart(2, '0')}T${form.start_hour.toString().padStart(2, '0')}:00`}
+            onChange={(e) => {
+              if (!e.target.value) return;
+              const d = new Date(e.target.value);
+              setForm(f => ({
+                ...f,
+                month: d.getMonth() + 1,
+                day: d.getDate(),
+                start_hour: d.getHours(),
+                day_of_week: d.getDay() === 0 ? 6 : d.getDay() - 1 // 0=Mon, 6=Sun
+              }));
+            }}
+            className={inputCls}
+            style={{ colorScheme: 'dark' }} // Forces dark theme for native calendar popups
+          />
+        </Field>
       </div>
 
       {/* Context */}
