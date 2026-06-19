@@ -4,7 +4,7 @@ import "./globals.css"
 import "leaflet/dist/leaflet.css"
 import Navbar from "@/components/shared/Navbar"
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
 export const metadata: Metadata = {
   title: "ASTRAM Gridlock — Bengaluru Traffic Intelligence",
@@ -15,9 +15,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.className} bg-gray-950 text-white min-h-screen`}>
+      <body className={`${inter.variable} font-sans bg-[#080c16] text-white min-h-screen`}>
         <Navbar />
-        <main className="min-h-[calc(100vh-56px)]">
+        <main className="min-h-[calc(100vh-60px)]">
           {children}
         </main>
       </body>

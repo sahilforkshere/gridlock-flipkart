@@ -7,4 +7,4 @@ numpy==2.2.3
 pandas==2.2.3
 joblib==1.4.2
 pytorch-tabnet==4.1.0
-torch==2.7.0
+torch>=2.9.0
