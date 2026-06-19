@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform } from "framer-motion"
 import { useRef } from "react"
 import SmoothScroll from "@/components/providers/SmoothScroll"
 import { Brain, GitBranch, Map, Zap, Shield, TrendingUp, ArrowRight, ChevronRight } from "lucide-react"
+import Aurora from "@/components/ui/Aurora"
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -94,16 +95,14 @@ export default function LandingPage() {
       </div>
 
       {/* Hero */}
-      <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden px-6">
-        <motion.div style={{ y: blobY }} className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full opacity-[0.08] blur-[120px]"
-            style={{ background: "radial-gradient(circle, #7C3AED, transparent 70%)" }} />
-          <div className="absolute bottom-1/3 right-1/4 w-[400px] h-[400px] rounded-full opacity-[0.06] blur-[100px]"
-            style={{ background: "radial-gradient(circle, #06B6D4, transparent 70%)" }} />
-        </motion.div>
-
-        <div className="absolute inset-0 opacity-[0.025] pointer-events-none"
-          style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundSize: "200px 200px" }} />
+      <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden px-6 bg-[#0A0A0F]">
+        <Aurora
+          colorStops={["#06B6D4", "#7C3AED", "#111118"]}
+          blend={0.5}
+          amplitude={1.0}
+          speed={1}
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_20%,transparent_100%)] pointer-events-none" />
 
         <div className="relative z-10 max-w-4xl mx-auto text-center">
           <motion.div custom={0} variants={fadeUp} initial="hidden" animate="show"
@@ -129,7 +128,7 @@ export default function LandingPage() {
           </motion.p>
 
           <motion.div custom={0.24} variants={fadeUp} initial="hidden" animate="show"
-            className="flex items-center justify-center gap-3 flex-wrap">
+            className="flex items-center justify-center gap-3 flex-wrap pointer-events-auto">
             <Link href="/predict"
               className="group relative inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold text-white overflow-hidden transition-all duration-200 hover:shadow-[0_0_30px_rgba(124,58,237,0.35)] active:scale-[0.98]"
               style={{ background: "linear-gradient(135deg, #7C3AED, #06B6D4)" }}>
