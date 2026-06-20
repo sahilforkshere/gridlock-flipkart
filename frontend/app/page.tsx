@@ -114,9 +114,8 @@ export default function LandingPage() {
           </motion.div>
 
           <motion.p custom={0.16} variants={fadeUp} initial="hidden" animate="show"
-            className="text-[clamp(1rem,2vw,1.2rem)] text-[var(--text-secondary)] max-w-xl mx-auto leading-relaxed mb-10 relative z-10">
-            Event-driven severity classification for Bengaluru using a stacked ensemble of
-            LightGBM, XGBoost, MLP, and TabNet. Input to recommendation in under 120ms.
+            className="text-[clamp(1.1rem,2.5vw,1.3rem)] text-[var(--text-secondary)] max-w-2xl mx-auto leading-[1.8] tracking-wide mb-10 relative z-10 font-light">
+            Anticipate traffic gridlocks in Bengaluru before they occur. Our intelligent system analyzes real-time events to instantly recommend diversion routes and resource deployments.
           </motion.p>
 
           <motion.div custom={0.24} variants={fadeUp} initial="hidden" animate="show"
@@ -135,12 +134,17 @@ export default function LandingPage() {
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 0.6 }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center">
-          <motion.div animate={{ y: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-            className="w-4 h-4 text-[var(--border-hover)]">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M8 3v10M4 9l4 4 4-4" />
-            </svg>
-          </motion.div>
+          <button
+            onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+            className="cursor-pointer p-2 opacity-50 hover:opacity-100 transition-opacity"
+            aria-label="Scroll down">
+            <motion.div animate={{ y: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+              className="w-4 h-4 text-[var(--border-hover)]">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M8 3v10M4 9l4 4 4-4" />
+              </svg>
+            </motion.div>
+          </button>
         </motion.div>
       </section>
 
@@ -303,60 +307,101 @@ export default function LandingPage() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-16 px-6">
-        <div className="max-w-7xl mx-auto text-center">
+      <section className="py-24 px-6 relative z-10">
+        <div className="max-w-6xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="relative rounded-3xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-6 md:px-12 py-16 overflow-hidden">
-            <div className="absolute inset-0 pointer-events-none opacity-20"
-              style={{ background: "radial-gradient(ellipse at 50% 100%, rgba(242, 169, 59, 0.15), transparent 60%)" }} />
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="relative rounded-2xl bg-[#09090b]/95 border border-white/[0.06] px-6 md:px-12 py-16 overflow-hidden">
+
+            {/* SVG Background Pattern ([ + ] Matrix) */}
+            <div className="absolute inset-0 pointer-events-none mix-blend-screen"
+              style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='10' y='10' width='20' height='20' fill='none' stroke='%23ffffff' stroke-width='0.5' stroke-opacity='0.055' rx='2' /%3E%3Cpath d='M20 17v6M17 20h6' stroke='%23ffffff' stroke-width='0.5' stroke-opacity='0.15'/%3E%3C/svg%3E")`, backgroundSize: '40px 40px' }} />
+
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-50" />
+
             <div className="relative z-10">
-              <p className="text-[11px] text-[var(--text-tertiary)] uppercase tracking-[0.18em] mb-4 font-medium">Try it now</p>
-              <h2 className="font-display text-[clamp(1.8rem,4vw,2.5rem)] font-bold tracking-[-0.02em] text-[var(--text-primary)] mb-10">
+              <p className="text-[9px] text-[var(--text-tertiary)] uppercase tracking-[0.3em] mb-4 font-medium opacity-80">Try it now</p>
+              <h2 className="font-display text-[clamp(1.5rem,3vw,2.2rem)] font-light tracking-wide text-white mb-12">
                 Load a demo scenario
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 w-full mx-auto mb-10 text-left">
+              <div className="flex flex-col md:flex-row justify-between items-center w-full mx-auto gap-4 md:gap-0">
                 {[
-                  { label: "Cricket at Chinnaswamy", tag: "Critical", icon: Trophy,  color: "var(--severity-critical)", bg: "bg-[#e5484d]/10", border: "border-[#e5484d]/30" },
-                  { label: "Breakdown on ORR",       tag: "High",     icon: Wrench,  color: "var(--severity-high)",     bg: "bg-[#f2873b]/10", border: "border-[#f2873b]/30" },
-                  { label: "Procession in CBD",      tag: "Medium",   icon: Flag,    color: "var(--severity-medium)",   bg: "bg-[#f2a93b]/10", border: "border-[#f2a93b]/30" },
-                  { label: "Road Work Off Peak",     tag: "Low",      icon: HardHat, color: "var(--severity-low)",      bg: "bg-[#34c77b]/10", border: "border-[#34c77b]/30" },
+                  {
+                    label: "Cricket at Chinnaswamy", tag: "Critical", color: "#e5484d",
+                    icon: (
+                      <div className="text-slate-400 group-hover:text-white transition-colors duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                          <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                          <path d="M4 22h16" />
+                          <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34" />
+                          <path d="M12 2a6 6 0 0 1 6 6v1c0 2.2-1.8 4-4 4h-4a4 4 0 0 1-4-4V8a6 6 0 0 1 6-6z" />
+                        </svg>
+                      </div>
+                    )
+                  },
+                  {
+                    label: "Breakdown on ORR", tag: "High", color: "#f2873b",
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 group-hover:text-white transition-colors duration-300">
+                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+                      </svg>
+                    )
+                  },
+                  {
+                    label: "Procession in CBD", tag: "Medium", color: "#f2a93b",
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 group-hover:text-white transition-colors duration-300">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                      </svg>
+                    )
+                  },
+                  {
+                    label: "Road Work Off Peak", tag: "Low", color: "#34c77b",
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 group-hover:text-white transition-colors duration-300">
+                        <path d="m10.5 2 7.5 18" />
+                        <path d="M13.5 2 6 20" />
+                        <path d="M3 20h18" />
+                        <path d="M8 10h8" />
+                        <path d="M7 14h10" />
+                      </svg>
+                    )
+                  },
                 ].map((demo, i) => (
-                  <Link key={demo.label} href={`/predict?demo=${encodeURIComponent(demo.label)}`}
-                    className="group relative flex flex-col justify-between gap-4 p-5 rounded-2xl bg-[var(--bg-elevated-2)] border border-[var(--border-subtle)] overflow-hidden transition-all duration-300 hover:border-[var(--border-hover)] hover:-translate-y-1 hover:shadow-2xl z-10"
-                  >
-                    {/* Background Glow */}
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                      style={{ background: `radial-gradient(circle at top right, ${demo.color}15, transparent 70%)` }} />
-                    
-                    <div className="relative z-10 flex items-start justify-between">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${demo.bg} ${demo.border} border shadow-inner`}>
-                        <demo.icon size={18} style={{ color: demo.color }} />
+                  <div key={demo.label} className="flex flex-1 items-center justify-center relative w-full group">
+                    <Link href={`/predict?demo=${encodeURIComponent(demo.label)}`}
+                      className="flex flex-col items-center md:items-start text-center md:text-left gap-3 w-full max-w-[200px] p-5 rounded-xl transition-all duration-300 ease-in-out hover:bg-white/[0.02]"
+                    >
+                      {demo.icon}
+                      <div className="flex flex-col gap-1.5 mt-2">
+                        <h3 className="text-[13px] font-medium text-slate-300 group-hover:text-white transition-colors tracking-wide">{demo.label}</h3>
+                        <div className="flex items-center justify-center md:justify-start gap-2 opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+                          <span className="w-[5px] h-[5px] rounded-full" style={{ background: demo.color }} />
+                          <span className="text-[8px] font-medium uppercase tracking-[0.2em] text-slate-500">{demo.tag} SEVERITY</span>
+                        </div>
                       </div>
-                      <ArrowRight size={16} className="text-[var(--text-tertiary)] group-hover:text-[var(--text-primary)] group-hover:translate-x-1 transition-all duration-300" />
-                    </div>
-
-                    <div className="relative z-10 mt-2">
-                      <h3 className="text-[15px] font-semibold text-[var(--text-primary)] mb-1.5 line-clamp-2 leading-snug">{demo.label}</h3>
-                      <div className="flex items-center gap-1.5 mt-2">
-                        <span className="w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor]" style={{ color: demo.color, background: demo.color }} />
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">{demo.tag} SEVERITY</span>
-                      </div>
-                    </div>
-                  </Link>
+                    </Link>
+                    {/* Vertical Divider */}
+                    {i < 3 && (
+                      <div className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 w-px h-12 bg-white/[0.04]" />
+                    )}
+                  </div>
                 ))}
               </div>
 
-              <div className="flex items-center justify-center gap-3 flex-wrap mt-8">
+              <div className="flex justify-center mt-12">
                 <Link href="/predict"
-                  className="group relative inline-flex items-center gap-2 px-8 py-4 rounded-xl text-[15px] font-bold text-[var(--bg-base)] overflow-hidden transition-all duration-300 active:scale-[0.98] bg-[var(--accent-signal)] hover:shadow-[0_0_30px_rgba(242,169,59,0.35)]">
-                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-                  <span className="relative z-10">Start from scratch</span>
-                  <ArrowRight size={18} className="relative z-10 group-hover:translate-x-1 transition-transform" />
+                  className="group relative inline-flex items-center gap-3 px-8 py-2.5 rounded-full text-xs font-medium text-slate-400 overflow-hidden transition-all duration-300 border border-white/10 bg-transparent hover:bg-white/5 hover:text-white hover:border-white/20">
+                  <span className="relative z-10 transition-colors duration-300">Start from scratch</span>
+                  <ArrowRight size={13} className="relative z-10 opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
                 </Link>
               </div>
             </div>
@@ -365,10 +410,21 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-[var(--border-subtle)] py-8 px-6 bg-[var(--bg-base)]">
-        <div className="max-w-6xl mx-auto flex items-center justify-between text-[11px] text-[var(--text-tertiary)]">
-          <span>ASTRAM Gridlock — Bengaluru Traffic Intelligence</span>
-          <span>Flipkart GridLock</span>
+      <footer className="w-full border-t border-white/[0.04] bg-[#000000] py-6 px-8 relative z-20">
+        <div className="flex items-center justify-between w-full max-w-none">
+          {/* Logo block */}
+          <div className="flex items-center group">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-slate-500 group-hover:text-white transition-colors duration-300 cursor-pointer">
+              <path d="M4 2v20h4V8l10 14h4V2h-4v14L8 2H4z" />
+            </svg>
+          </div>
+
+          {/* Text block */}
+          <div className="flex items-center gap-3 text-[10px] tracking-wider text-slate-500 font-medium">
+            <span className="hover:text-slate-400 transition-colors cursor-pointer">ASTRAM Gridlock — Bengaluru Traffic Intelligence</span>
+            <span className="text-slate-800">|</span>
+            <span className="hover:text-slate-400 transition-colors cursor-pointer">Flipkart GridLock</span>
+          </div>
         </div>
       </footer>
     </SmoothScroll>

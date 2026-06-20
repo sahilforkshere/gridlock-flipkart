@@ -28,5 +28,9 @@ backend/*.exe
 .DS_Store
 Thumbs.db
 
-# Jupyter checkpoints
-.ipynb_checkpoints/
+
+
+# Non-essential project docs
+DEPLOY.md
+ROADMAP.md
+project_theme.txt
