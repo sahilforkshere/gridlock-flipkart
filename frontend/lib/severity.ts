@@ -37,11 +37,10 @@ export const EVENT_CAUSES = [
   { value: "public_event",        label: "Public Event (Rally / Festival)" },
   { value: "accident",            label: "Accident" },
   { value: "vehicle_breakdown",   label: "Vehicle Breakdown" },
-  { value: "water_logging",       label: "Water Logging" },
+  { value: "waterlogging",        label: "Water Logging" },
   { value: "road_work",           label: "Road Work / Construction" },
   { value: "procession",          label: "Procession / March" },
   { value: "vip_movement",        label: "VIP Movement" },
-  { value: "sports_event",        label: "Sports Event" },
   { value: "fire",                label: "Fire" },
   { value: "other",               label: "Other" },
 ]

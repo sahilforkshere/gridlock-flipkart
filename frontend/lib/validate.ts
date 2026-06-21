@@ -1,11 +1,11 @@
 import { PredictRequest } from "@/types"
 
 export function validatePredictRequest(form: PredictRequest): string | null {
-  if (!Number.isFinite(form.latitude) || form.latitude < 12 || form.latitude > 13) {
-    return "Latitude must be between 12 and 13 (Bengaluru area)"
+  if (!Number.isFinite(form.latitude) || form.latitude < 12 || form.latitude > 14) {
+    return "Latitude must be between 12 and 14 (Bengaluru area)"
   }
-  if (!Number.isFinite(form.longitude) || form.longitude < 77 || form.longitude > 78) {
-    return "Longitude must be between 77 and 78 (Bengaluru area)"
+  if (!Number.isFinite(form.longitude) || form.longitude < 77 || form.longitude > 78.5) {
+    return "Longitude must be between 77 and 78.5 (Bengaluru area)"
   }
   if (form.start_hour < 0 || form.start_hour > 23) {
     return "Hour must be between 0 and 23"

@@ -6,7 +6,7 @@ type PredictRequest struct {
 	Longitude     float64  `json:"longitude" binding:"required"`
 	EventType     string   `json:"event_type" binding:"required"`
 	EventCause    string   `json:"event_cause" binding:"required"`
-	StartHour     int      `json:"start_hour" binding:"required,min=0,max=23"`
+	StartHour     int      `json:"start_hour" binding:"min=0,max=23"`
 	DayOfWeek     int      `json:"day_of_week" binding:"min=0,max=6"`
 	Month         int      `json:"month" binding:"required,min=1,max=12"`
 	Day           int      `json:"day" binding:"required,min=1,max=31"`

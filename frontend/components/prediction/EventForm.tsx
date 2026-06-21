@@ -77,12 +77,12 @@ export default function EventForm({ onSubmit, loading, pickedLocation, externalP
           <p className="text-[10px] text-[var(--accent-signal)] uppercase tracking-[0.12em] font-medium">Location</p>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Latitude">
-              <input type="number" step="any" placeholder="12.9716" value={form.latitude} min={12} max={13} required
+              <input type="number" step="any" placeholder="12.9716" value={form.latitude} min={12} max={14} required
                 onChange={e => set("latitude", parseFloat(e.target.value))}
                 className={`${inputCls} font-data`} />
             </Field>
             <Field label="Longitude">
-              <input type="number" step="any" placeholder="77.5946" value={form.longitude} min={77} max={78} required
+              <input type="number" step="any" placeholder="77.5946" value={form.longitude} min={77} max={78.5} required
                 onChange={e => set("longitude", parseFloat(e.target.value))}
                 className={`${inputCls} font-data`} />
             </Field>

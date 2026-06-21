@@ -5,16 +5,16 @@ import SeverityBadge from "@/components/shared/SeverityBadge"
 
 function getEventIcon(cause: string) {
   switch (cause) {
-    case "public_event":      return <Users size={16} />
-    case "accident":          return <AlertTriangle size={16} />
+    case "public_event": return <Users size={16} />
+    case "accident": return <AlertTriangle size={16} />
     case "vehicle_breakdown": return <Wrench size={16} />
-    case "water_logging":     return <Droplets size={16} />
-    case "road_work":         return <HardHat size={16} />
-    case "procession":        return <Flag size={16} />
-    case "vip_movement":      return <Crown size={16} />
-    case "sports_event":      return <Trophy size={16} />
-    case "fire":              return <Flame size={16} />
-    default:                  return <MapPin size={16} />
+    case "waterlogging": return <Droplets size={16} />
+    case "road_work": return <HardHat size={16} />
+    case "procession": return <Flag size={16} />
+    case "vip_movement": return <Crown size={16} />
+    case "sports_event": return <Trophy size={16} />
+    case "fire": return <Flame size={16} />
+    default: return <MapPin size={16} />
   }
 }
 
@@ -25,7 +25,25 @@ interface Demo {
   preset: PredictRequest
 }
 
-const DEMOS: Demo[] = [
+function getNextDate(targetDayOfWeek: number, targetHour: number) {
+  const now = new Date()
+  // targetDayOfWeek: 0=Mon, 1=Tue, 2=Wed, 3=Thu, 4=Fri, 5=Sat, 6=Sun
+  const currentDayOfWeek = now.getDay() === 0 ? 6 : now.getDay() - 1
+
+  let daysToAdd = targetDayOfWeek - currentDayOfWeek
+  // If the day has already passed this week, or it's today but the hour has passed, push to next week
+  if (daysToAdd < 0 || (daysToAdd === 0 && now.getHours() >= targetHour)) {
+    daysToAdd += 7
+  }
+
+  const targetDate = new Date(now.getTime() + daysToAdd * 24 * 60 * 60 * 1000)
+  return {
+    month: targetDate.getMonth() + 1,
+    day: targetDate.getDate(),
+  }
+}
+
+const getDemos = (): Demo[] => [
   {
     label: "Cricket at Chinnaswamy",
     tag: "Critical",
@@ -36,9 +54,8 @@ const DEMOS: Demo[] = [
       event_type: "planned",
       event_cause: "public_event",
       start_hour: 18,
-      day_of_week: 4,
-      month: 6,
-      day: 20,
+      day_of_week: 4, // Friday
+      ...getNextDate(4, 18),
       corridor: "MG Road",
       zone: "CBD 1",
       police_station: "Cubbon Park",
@@ -56,9 +73,8 @@ const DEMOS: Demo[] = [
       event_type: "unplanned",
       event_cause: "vehicle_breakdown",
       start_hour: 9,
-      day_of_week: 0,
-      month: 6,
-      day: 16,
+      day_of_week: 0, // Monday
+      ...getNextDate(0, 9),
       corridor: "ORR East 1",
       zone: "East",
       police_station: "Marathahalli",
@@ -76,9 +92,8 @@ const DEMOS: Demo[] = [
       event_type: "planned",
       event_cause: "procession",
       start_hour: 14,
-      day_of_week: 6,
-      month: 6,
-      day: 22,
+      day_of_week: 6, // Sunday
+      ...getNextDate(6, 14),
       corridor: undefined,
       zone: "CBD 2",
       police_station: "Indiranagar",
@@ -96,9 +111,8 @@ const DEMOS: Demo[] = [
       event_type: "planned",
       event_cause: "road_work",
       start_hour: 2,
-      day_of_week: 2,
-      month: 6,
-      day: 18,
+      day_of_week: 2, // Wednesday
+      ...getNextDate(2, 2),
       corridor: undefined,
       zone: "South",
       police_station: "JP Nagar",
@@ -115,7 +129,7 @@ interface Props {
 export default function DemoScenarios({ onLoad }: Props) {
   return (
     <div className="surface rounded-lg overflow-hidden grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-[var(--border-subtle)]">
-      {DEMOS.map((d, i) => {
+      {getDemos().map((d, i) => {
         const color = SEVERITY_COLORS[d.tag] || "var(--border-subtle)"
         return (
           <button
@@ -124,11 +138,11 @@ export default function DemoScenarios({ onLoad }: Props) {
             className="w-full relative flex flex-col items-start hover:bg-[var(--bg-elevated-2)] transition-colors group p-4"
           >
             {/* Top border severity line */}
-            <div 
+            <div
               className="absolute top-0 left-0 right-0 h-[3px] opacity-80 group-hover:opacity-100 transition-opacity"
               style={{ backgroundColor: color }}
             />
-            
+
             <div className="w-full flex justify-between items-start mb-2 mt-1">
               <span className="text-xl bg-[var(--bg-base)] w-8 h-8 rounded-full flex items-center justify-center border border-[var(--border-subtle)] shadow-sm shrink-0">
                 {getEventIcon(d.preset.event_cause)}
