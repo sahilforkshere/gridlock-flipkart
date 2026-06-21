@@ -1,38 +1,88 @@
-# ASTRAM Gridlock — Bengaluru Traffic Congestion Prediction
+# 🚦 ASTRAM Gridlock — Bengaluru Traffic Congestion Prediction
 
-**Theme:** Event-Driven Congestion (Planned & Unplanned)
-**Deadline:** 21 June 2026
+> **Predict. Prepare. Prevent.** — An AI-powered system to forecast event-driven traffic congestion and generate real-time resource allocation recommendations for Bengaluru's traffic management authorities.
 
-## Architecture
+[![Go](https://img.shields.io/badge/Backend-Go%201.21+-00ADD8?logo=go&logoColor=white)](https://go.dev)
+[![Python](https://img.shields.io/badge/ML%20Sidecar-Python%203.10+-3776AB?logo=python&logoColor=white)](https://python.org)
+[![Next.js](https://img.shields.io/badge/Frontend-Next.js%2015-black?logo=next.js&logoColor=white)](https://nextjs.org)
+[![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+
+---
+
+## 🌟 What is ASTRAM Gridlock?
+
+ASTRAM Gridlock is a full-stack predictive AI application built for the **Flipkart Grid 6.0 Hackathon**. It addresses the real-world challenge of **event-driven traffic congestion** in Bengaluru — both planned events (concerts, rallies, marathons) and unplanned incidents.
+
+Given an event's location, type, timing, and duration, the system:
+- Predicts **traffic severity level** (Low / Medium / High / Critical)
+- Provides a **confidence score** with class probabilities
+- Recommends **manpower, barricading, and diversion strategies**
+- Identifies the **geo-cluster** of impact using K-Means on Bengaluru's road network
+
+---
+
+## 🏗️ Architecture
 
 ```
-Next.js 15 Frontend (:3000)
-        ↓  POST /api/predict
-Go + Gin Backend (:8080)
-        ↓  POST /infer (internal)
-Python FastAPI ML Sidecar (:8001)
-        ↓  LightGBM + XGBoost + MLP + TabNet → meta-learner
-        ↑  severity, confidence, probabilities, resource recommendations
+Next.js 15 Frontend  (:3000)
+        │
+        │  POST /api/predict
+        ▼
+Go + Gin Backend  (:8080)
+        │
+        │  POST /infer  (internal)
+        ▼
+Python FastAPI ML Sidecar  (:8001)
+        │
+        │  LightGBM + XGBoost + MLP + TabNet → Stacking Meta-Learner
+        ▼
+  Severity · Confidence · Probabilities · Resource Recommendations
 ```
 
-## Prerequisites
+---
 
+## 🤖 ML Models
+
+| Model | Role |
+|---|---|
+| **LightGBM** | Base learner — best single model |
+| **XGBoost** | Base learner |
+| **MLP (sklearn)** | Base learner — captures non-linear patterns |
+| **TabNet** | Base learner (deep tabular learning) |
+| **Meta-Learner** | Stacks base model outputs → final prediction |
+| **KMeans (20 clusters)** | Geo-cluster assignment across Bengaluru |
+
+**Severity Classes:** `0 = Low` · `1 = Medium` · `2 = High` · `3 = Critical`
+
+---
+
+## 💻 Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | Next.js 15 (App Router), TypeScript, TailwindCSS |
+| Backend | Go 1.21+, Gin framework |
+| ML Sidecar | Python 3.10+, FastAPI, scikit-learn, LightGBM, XGBoost, PyTorch |
+| Maps | Leaflet.js (Bengaluru interactive map) |
+| Containerization | Docker, Docker Compose |
+
+---
+
+## 🚀 Quick Start (3 terminals)
+
+### Prerequisites
 - **Go** 1.21+
 - **Python** 3.10+ (with pip)
 - **Node.js** 18+
-- ML model files (`.pkl`) in `ml_sidecar/astram_models_bundle/`
-
-## Quick Start (3 terminals)
 
 ### Terminal 1 — Python ML Sidecar
 
 ```bash
 cd ml_sidecar
 pip install -r requirements.txt
-py -m uvicorn main:app --port 8001 --reload
+python -m uvicorn main:app --port 8001 --reload
 ```
-
-Runs on http://localhost:8001
+Runs on → http://localhost:8001
 
 ### Terminal 2 — Go Backend
 
@@ -40,8 +90,7 @@ Runs on http://localhost:8001
 cd backend
 go run main.go
 ```
-
-Runs on http://localhost:8080
+Runs on → http://localhost:8080
 
 ### Terminal 3 — Next.js Frontend
 
@@ -50,54 +99,38 @@ cd frontend
 npm install
 npm run dev
 ```
+Runs on → http://localhost:3000
 
-Runs on http://localhost:3000
+---
 
-## Environment Variables
+## ⚙️ Environment Variables
 
 ### Go Backend (`backend/`)
 
 | Variable | Default | Description |
 |---|---|---|
-| `PORT` | `8080` | Port for Go server |
-| `SIDECAR_URL` | `http://localhost:8001` | URL of Python sidecar |
+| `PORT` | `8080` | Port for the Go server |
+| `SIDECAR_URL` | `http://localhost:8001` | URL of the Python ML sidecar |
 
-### Next.js Frontend (`frontend/`)
+### Next.js Frontend — create `frontend/.env.local`
 
-Create `frontend/.env.local`:
-```
+```env
 NEXT_PUBLIC_API_URL=http://localhost:8080
 ```
 
-## Required Model Files
+---
 
-Place these in `ml_sidecar/astram_models_bundle/`:
+## 🔌 API Reference
 
-```
-lgbm_model.pkl
-xgb_model.pkl
-mlp_model.pkl
-meta_learner.pkl
-scaler.pkl
-label_encoders.pkl
-kmeans_model.pkl
-feature_names.pkl
-tabnet_model.zip
-```
-
-> These are excluded from git (large binary files). Download from the training notebook or Google Drive.
-
-## API Endpoints
-
-### Go Backend (public)
+### Endpoints
 
 | Method | Path | Description |
 |---|---|---|
-| GET | `/api/health` | Health check |
-| POST | `/api/predict` | Predict congestion severity |
-| GET | `/api/meta` | Get corridors, zones, police stations |
+| `GET` | `/api/health` | Health check |
+| `POST` | `/api/predict` | Predict congestion severity |
+| `GET` | `/api/meta` | Get corridors, zones, police stations |
 
-### POST /api/predict — Request Body
+### POST `/api/predict` — Request
 
 ```json
 {
@@ -114,7 +147,7 @@ tabnet_model.zip
 }
 ```
 
-### POST /api/predict — Response
+### POST `/api/predict` — Response
 
 ```json
 {
@@ -139,67 +172,87 @@ tabnet_model.zip
 }
 ```
 
-## Project Structure
+---
+
+## 📁 Project Structure
 
 ```
-gridlock-new/
-├── backend/                  # Go + Gin API server
+gridlock-flipkart/
+├── backend/                    # Go + Gin API server
 │   ├── main.go
 │   ├── handlers/
 │   │   ├── predict.go
 │   │   └── health.go
 │   ├── services/
-│   │   └── inference.go      # Calls Python sidecar
-│   └── models/
-│       └── types.go
-├── ml_sidecar/               # Python FastAPI ML inference
+│   │   └── inference.go        # Calls Python sidecar
+│   ├── models/
+│   │   └── types.go
+│   └── Dockerfile
+├── ml_sidecar/                 # Python FastAPI ML inference
 │   ├── main.py
 │   ├── predictor.py
 │   ├── loader.py
 │   ├── config.py
+│   ├── generate_pkl_models.py  # Model training script
 │   ├── requirements.txt
-│   └── astram_models_bundle/ # .pkl files (not in git)
-├── frontend/                 # Next.js 15 App Router
+│   ├── Dockerfile
+│   └── astram_models_bundle/   # Trained model weights (.pkl)
+├── frontend/                   # Next.js 15 App Router
 │   ├── app/
-│   │   ├── page.tsx          # Dashboard
-│   │   ├── predict/page.tsx  # Prediction form
-│   │   └── history/page.tsx  # History table
+│   │   ├── page.tsx            # Landing page
+│   │   ├── (app)/
+│   │   │   ├── dashboard/      # Live map dashboard
+│   │   │   ├── predict/        # Prediction form + results
+│   │   │   ├── history/        # Past predictions
+│   │   │   └── model/          # ML model insights
 │   ├── components/
-│   │   ├── map/BengaluruMap.tsx
-│   │   ├── prediction/
-│   │   └── shared/
+│   │   ├── map/                # BengaluruMap (Leaflet)
+│   │   ├── prediction/         # EventForm, AnalysisPopup, Charts
+│   │   ├── shared/             # Navbar, GlowBorder, SeverityBadge
+│   │   └── ui/                 # Base UI components
 │   └── lib/
 │       ├── api.ts
-│       ├── history.ts
-│       └── severity.ts
-└── ROADMAP.md
+│       ├── severity.ts
+│       └── validate.ts
+├── astram_models_bundle/       # Root-level model charts & weights
+├── Flipkart_gridlock.ipynb     # EDA + model training notebook
+├── docker-compose.yml
+└── README.md
 ```
 
-## Deployment
+---
 
-See **[DEPLOY.md](./DEPLOY.md)** for full Railway + Vercel step-by-step instructions.
+## 🐳 Docker Compose
 
-### Railway (Go + Python)
+To run the entire stack with Docker:
 
-1. Connect GitHub repo to Railway
-2. Create two services: `backend/` and `ml_sidecar/`
-3. Set env vars: `SIDECAR_URL=http://<sidecar-service>.railway.internal:8001`
-4. Upload `.pkl` files as Railway volumes or use a shared drive URL at startup
+```bash
+docker-compose up --build
+```
 
-### Vercel (Next.js)
+This starts all three services (Frontend, Backend, ML Sidecar) in containers.
 
-1. Connect GitHub repo to Vercel, set root to `frontend/`
+---
+
+## 🚢 Deployment
+
+### Railway (Go Backend + Python ML Sidecar)
+
+1. Connect your GitHub repo to [Railway](https://railway.app)
+2. Create two services pointing to `backend/` and `ml_sidecar/`
+3. Set env var: `SIDECAR_URL=http://<sidecar-service>.railway.internal:8001`
+
+### Vercel (Next.js Frontend)
+
+1. Connect your GitHub repo to [Vercel](https://vercel.com), set root to `frontend/`
 2. Set env var: `NEXT_PUBLIC_API_URL=https://<your-railway-go-url>`
 
-## ML Models
+---
 
-| Model | Role |
-|---|---|
-| LightGBM | Base learner (best single model) |
-| XGBoost | Base learner |
-| MLP (sklearn) | Base learner |
-| TabNet | Base learner (optional) |
-| Meta-learner | Stacks base model probabilities → final prediction |
-| KMeans (20 clusters) | Geo-cluster assignment for Bengaluru |
+## 📊 Model Performance
 
-**Severity Classes:** 0=Low, 1=Medium, 2=High, 3=Critical
+Model training, evaluation metrics, and feature importance charts are available in the **[`Flipkart_gridlock.ipynb`](./Flipkart_gridlock.ipynb)** notebook and visualized in the **Model Insights** page of the app.
+
+---
+
+*Built with ❤️ for Flipkart Grid 6.0 — June 2026*
